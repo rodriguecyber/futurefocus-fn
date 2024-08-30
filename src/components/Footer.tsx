@@ -84,29 +84,29 @@ const Footer = () => {
 
           {/* Gallery */}
           <div className="flex flex-col">
-            <h1 className="text-lg font-semibold mb-4">Gallery</h1>
+            <h1 className="text-lg font-semibold mb-4">Donate</h1>
             <div className="grid grid-cols-2 gap-2">
-              <img
-                src="/gallery1.jpg"
-                alt="Gallery 1"
-                className="w-full h-auto"
-              />
-              
-              <img
-                src="/gallery4.jpg"
-                alt="Gallery 4"
-                className="w-full h-auto"
-              />
-              <img
-                src="/gallery5.jpg"
-                alt="Gallery 5"
-                className="w-full h-auto"
-              />
-              <img
-                src="/gallery6.jpg"
-                alt="Gallery 6"
-                className="w-full h-auto"
-              />
+              <a href="/">
+                <img
+                  src="/momo.png"
+                  alt="momo"
+                  className="w-full h-auto"
+                />
+              </a>
+              <a href="/">
+                <img
+                  src="/aittel.png"
+                  alt="Airtel"
+                  className="w-full h-auto"
+                />
+              </a>
+              <a href="/">
+                <img
+                  src="/paypal.png"
+                  alt="Paypal"
+                  className="w-full h-auto"
+                />
+              </a>
             </div>
           </div>
 
