@@ -1,4 +1,4 @@
-import { Courses } from "@/arrays/Courses";
+'use client'
 import { getCourses,Course } from "@/context/courseContext";
 import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";

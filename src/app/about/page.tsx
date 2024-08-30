@@ -6,7 +6,7 @@ import WhyUs from '@/components/whyUs';
 import React from 'react'
 
 const About = () => {
-  return (
+  return ( 
     <div>
       <Header/>
       <div className="py-20 w-full text-center  text-white bg-[#297B66] mb-10">
