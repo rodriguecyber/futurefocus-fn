@@ -35,18 +35,18 @@ const MembersPage: React.FC = () => {
 
   useEffect(() => {
     const loadTeamMembers = async () => {
-      setIsLoading(true); // Start loading
+      setIsLoading(true); 
       try {
         const teamMembers = await fetchTeam();
         setMembers(teamMembers);
       } catch (error) {
         toast.error("Failed to fetch team data");
       } finally {
-        setIsLoading(false); // Stop loading
+        setIsLoading(false); 
       }
     };
     loadTeamMembers();
-  }, );
+  },[fetchTeam] );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
