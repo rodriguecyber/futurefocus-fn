@@ -46,7 +46,7 @@ const MembersPage: React.FC = () => {
       }
     };
     loadTeamMembers();
-  },[fetchTeam] );
+  },[] );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
