@@ -9,7 +9,7 @@ import API_BASE_URL from "@/config/baseURL";
 export interface MediaItem {
   _id: string;
   type: "image" | "video";
-  src: string;
+  url: string;
   content: string;
   videoUrl?: string;
   link?: string;
@@ -19,7 +19,7 @@ const MediaPostForm: React.FC = () => {
   const [formData, setFormData] = useState<MediaItem>({
     _id: "",
     type: "image",
-    src: "",
+    url: "",
     content: "",
     videoUrl: "",
     link: "",
@@ -130,7 +130,7 @@ const MediaPostForm: React.FC = () => {
     setFormData({
       _id: "",
       type: "image",
-      src: "",
+      url: "",
       content: "",
       videoUrl: "",
       link: "",
@@ -249,7 +249,7 @@ const MediaPostForm: React.FC = () => {
                 </p>
                 {item.type === "image" ? (
                   <img
-                    src={item.src}
+                    src={item.url}
                     alt={item.content}
                     className="mt-2 max-w-full h-auto"
                   />
