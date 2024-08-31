@@ -7,9 +7,6 @@ import {
 } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import cookie from 'cookie'
-import { NextApiRequest, NextApiResponse } from "next";
-import { response } from "express";
 import API_BASE_URL from "@/config/baseURL";
 interface Admin {
   email: string;

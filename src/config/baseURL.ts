@@ -1,6 +1,5 @@
 // config.js
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "https://futurefocus-bn.onrender.com";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL; 
 
 // const BACKEND_URLS = {
 //   login: `${API_BASE_URL}/auth/login`,
