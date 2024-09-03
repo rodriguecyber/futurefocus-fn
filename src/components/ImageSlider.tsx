@@ -47,22 +47,25 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({ slides }) => {
         } w-full`}
       >
         {slide.type === "image" ? (
-          <Link href={slide.url || "#"}>
+          <Link href={"#"}>
             <img
               src={slide.url}
               alt={`Slide ${adjustedIndex}`}
               className="w-full h-full object-cover"
+              style={{ width: "300px", height: "200px" }} // Adjust the size here
             />
           </Link>
         ) : (
           <div
             className="relative cursor-pointer"
             onClick={() => setIsModalOpen(true)}
+            style={{ width: "300px", height: "200px" }} // Adjust the size here
           >
             <img
               src={slide.url}
               alt={`Video thumbnail ${adjustedIndex}`}
               className="w-full h-full object-cover"
+              style={{ width: "300px", height: "200px" }} // Adjust the size here
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <svg
@@ -83,10 +86,10 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({ slides }) => {
     <div
       className="pt-1 w-screen bg-cover bg-center relative"
       style={{
-        backgroundImage: "url('https://futurefocus.co.rw/img/coder.jpg')",
+        backgroundImage:
+          "url('https://barkleypd.com/wp-content/uploads/2023/01/AdobeStock_34360454-scaled.jpeg')",
       }}
     >
-      {/* Check if slides and currentIndex exist before using */}
       {slides.length > 0 && slides[currentIndex] && (
         <>
           <div
