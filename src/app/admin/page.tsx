@@ -4,6 +4,7 @@ import Layout from "./Layout";
 import withAdminAuth from "@/components/withAdminAuth";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
+import { toast } from "react-toastify";
 
 export interface MediaItem {
   _id: string;
@@ -24,7 +25,8 @@ const MediaPostForm: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [isEditing, setIsEditing] = useState(false);
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -80,13 +82,13 @@ const MediaPostForm: React.FC = () => {
       data.append("file", fileInput.files[0]);
     } else if (formData.type === "image") {
       setIsSubmitting(false);
-      alert("Please select a file to upload.");
+      toast.error("Select an image");
       return;
     }
 
     try {
       let response;
-      if (isEditing) {
+      if (editingItemId) {
         response = await axios.put(
           `${API_BASE_URL}/media/${formData._id}`,
           data,
@@ -110,27 +112,30 @@ const MediaPostForm: React.FC = () => {
     } catch (error) {
       console.error("Error uploading/updating file:", error);
       if (axios.isAxiosError(error) && error.response) {
-        alert(`Error: ${error.response.data.message}`);
+        toast.error(`Error: ${error.response.data.message}`);
       } else {
-        alert("An error occurred while uploading the file.");
+        toast.error("An error occurred while uploading the file.");
       }
     } finally {
       setIsSubmitting(false);
-      setIsEditing(false);
+      setEditingItemId(null);
     }
   };
 
   const handleEdit = (item: MediaItem) => {
     setFormData(item);
-    setIsEditing(true);
+    
   };
 
   const handleDelete = async (id: string) => {
     try {
+      setDeletingItemId(id);
       await axios.delete(`${API_BASE_URL}/media/${id}`);
       fetchMediaItems();
     } catch (error) {
       console.error("Error deleting media item:", error);
+    } finally {
+      setDeletingItemId(null);
     }
   };
 
@@ -142,7 +147,7 @@ const MediaPostForm: React.FC = () => {
       content: "",
       videoUrl: "",
     });
-    setIsEditing(false);
+    setEditingItemId(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -152,7 +157,7 @@ const MediaPostForm: React.FC = () => {
     <Layout>
       <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
         <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
-          {isEditing ? "Edit Media" : "Post Media"}
+          {editingItemId ? "Edit Media" : "Post Media"}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -223,9 +228,13 @@ const MediaPostForm: React.FC = () => {
               } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "Submitting..." : isEditing ? "Update" : "Submit"}
+              {isSubmitting
+                ? "Submitting..."
+                : editingItemId
+                ? "Update"
+                : "Submit"}
             </button>
-            {isEditing && (
+            {editingItemId && (
               <button
                 type="button"
                 onClick={resetForm}
@@ -244,38 +253,50 @@ const MediaPostForm: React.FC = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {mediaItems.map((item) => (
-            <div key={item._id} className="relative group">
+            <div
+              key={item._id}
+              className="border border-gray-300 p-4 rounded-lg shadow-sm"
+            >
               {item.type === "image" ? (
                 <img
                   src={item.url}
                   alt={item.content}
-                  className="w-full h-48 object-cover rounded-md"
+                  className="w-full h-48 object-cover rounded-lg mb-2"
                 />
               ) : (
-                <>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${new URL(
-                      item.videoUrl!
-                    ).searchParams.get("v")}`}
-                    title={item.content}
-                    className="w-full h-48 mt-2"
-                    allowFullScreen
-                    
-                  ></iframe>
-                </>
+                <a
+                  href={item.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <img
+                    src={item.url}
+                    alt={item.content}
+                    className="w-full h-48 object-cover rounded-lg mb-2"
+                  />
+                </a>
               )}
-              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex justify-center items-center space-x-2 rounded-md transition-opacity duration-300">
+              <p className="text-sm text-gray-700 mb-2">{item.content}</p>
+              <div className="text-right space-x-2">
                 <button
                   onClick={() => handleEdit(item)}
-                  className="px-4 py-2 bg-white text-sm font-medium text-gray-700 rounded-md"
+                  className="px-3 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
+                  disabled={
+                    editingItemId === item._id || deletingItemId === item._id
+                  }
                 >
-                  Edit
+                  {editingItemId === item._id ? "Editing..." : "Edit"}
                 </button>
                 <button
                   onClick={() => handleDelete(item._id)}
-                  className="px-4 py-2 bg-red-600 text-sm font-medium text-white rounded-md"
+                  className={`px-3 py-1 text-sm text-white ${
+                    deletingItemId === item._id
+                      ? "bg-red-400 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600"
+                  } rounded-md focus:outline-none`}
+                  disabled={deletingItemId === item._id}
                 >
-                  Delete
+                  {deletingItemId === item._id ? "Deleting..." : "Delete"}
                 </button>
               </div>
             </div>
