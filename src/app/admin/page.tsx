@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Layout from "./Layout";
 import withAdminAuth from "@/components/withAdminAuth";
 import axios from "axios";
@@ -9,10 +8,9 @@ import API_BASE_URL from "@/config/baseURL";
 export interface MediaItem {
   _id: string;
   type: "image" | "video";
-  url: string;
+  url: string; // Image URL or Video Thumbnail URL
   content: string;
   videoUrl?: string;
-  link?: string;
 }
 
 const MediaPostForm: React.FC = () => {
@@ -22,12 +20,12 @@ const MediaPostForm: React.FC = () => {
     url: "",
     content: "",
     videoUrl: "",
-    link: "",
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchMediaItems();
@@ -60,7 +58,7 @@ const MediaPostForm: React.FC = () => {
       const src = URL.createObjectURL(file);
       setFormData((prevData) => ({
         ...prevData,
-        src,
+        url: src,
       }));
     }
   };
@@ -72,13 +70,18 @@ const MediaPostForm: React.FC = () => {
     const data = new FormData();
     data.append("type", formData.type);
     data.append("content", formData.content);
-    if (formData.videoUrl) data.append("videoUrl", formData.videoUrl);
-    if (formData.link) data.append("link", formData.link);
 
-    const fileInput =
-      e.currentTarget.querySelector<HTMLInputElement>("input[type='file']");
+    if (formData.type === "video" && formData.videoUrl) {
+      data.append("videoUrl", formData.videoUrl);
+    }
+
+    const fileInput = fileInputRef.current;
     if (fileInput?.files?.[0]) {
       data.append("file", fileInput.files[0]);
+    } else if (formData.type === "image") {
+      setIsSubmitting(false);
+      alert("Please select a file to upload.");
+      return;
     }
 
     try {
@@ -92,7 +95,7 @@ const MediaPostForm: React.FC = () => {
           }
         );
       } else {
-        response = await axios.post(`${API_BASE_URL}/media/upload`, data, {
+        response = await axios.post(`${API_BASE_URL}/media`, data, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
@@ -106,6 +109,11 @@ const MediaPostForm: React.FC = () => {
       }
     } catch (error) {
       console.error("Error uploading/updating file:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        alert(`Error: ${error.response.data.message}`);
+      } else {
+        alert("An error occurred while uploading the file.");
+      }
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -133,9 +141,11 @@ const MediaPostForm: React.FC = () => {
       url: "",
       content: "",
       videoUrl: "",
-      link: "",
     });
     setIsEditing(false);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -162,16 +172,33 @@ const MediaPostForm: React.FC = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700">
-              Upload Media
+              Upload {formData.type === "image" ? "Image" : "Thumbnail"}
             </label>
             <input
               type="file"
-              accept="image/*,video/*"
+              accept="image/*"
               onChange={handleFileChange}
               className="mt-1 block w-full"
               disabled={isSubmitting}
+              ref={fileInputRef}
             />
           </div>
+          {formData.type === "video" && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                YouTube Video URL
+              </label>
+              <input
+                type="text"
+                name="videoUrl"
+                value={formData.videoUrl || ""}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                disabled={isSubmitting}
+                placeholder="https://www.youtube.com/watch?v=example"
+              />
+            </div>
+          )}
           <div>
             <label className="block text-sm font-medium text-gray-700">
               Media Content
@@ -183,32 +210,6 @@ const MediaPostForm: React.FC = () => {
               className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               rows={4}
               placeholder="Describe the media content"
-              disabled={isSubmitting}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Video URL (for video type)
-            </label>
-            <input
-              type="text"
-              name="videoUrl"
-              value={formData.videoUrl}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              disabled={isSubmitting}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Link
-            </label>
-            <input
-              type="text"
-              name="link"
-              value={formData.link}
-              onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               disabled={isSubmitting}
             />
           </div>
@@ -235,48 +236,50 @@ const MediaPostForm: React.FC = () => {
             )}
           </div>
         </form>
+      </div>
 
-        <div className="mt-8">
-          <h3 className="text-xl font-bold mb-4 text-gray-900">Posted Media</h3>
-          <div className="space-y-4">
-            {mediaItems.map((item) => (
-              <div key={item._id} className="border p-4 rounded-md">
-                <p>
-                  <strong>Type:</strong> {item.type}
-                </p>
-                <p>
-                  <strong>Content:</strong> {item.content}
-                </p>
-                {item.type === "image" ? (
-                  <img
-                    src={item.url}
-                    alt={item.content}
-                    className="mt-2 max-w-full h-auto"
-                  />
-                ) : (
-                  <video
-                    src={item.videoUrl}
-                    controls
-                    className="mt-2 max-w-full h-auto"
-                  />
-                )}
-                <div className="mt-2 space-x-2">
-                  <button
-                    onClick={() => handleEdit(item)}
-                    className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(item._id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                </div>
+      <div className="mt-10 max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
+          Media Gallery
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {mediaItems.map((item) => (
+            <div key={item._id} className="relative group">
+              {item.type === "image" ? (
+                <img
+                  src={item.url}
+                  alt={item.content}
+                  className="w-full h-48 object-cover rounded-md"
+                />
+              ) : (
+                <>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${new URL(
+                      item.videoUrl!
+                    ).searchParams.get("v")}`}
+                    title={item.content}
+                    className="w-full h-48 mt-2"
+                    allowFullScreen
+                    
+                  ></iframe>
+                </>
+              )}
+              <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 flex justify-center items-center space-x-2 rounded-md transition-opacity duration-300">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="px-4 py-2 bg-white text-sm font-medium text-gray-700 rounded-md"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={() => handleDelete(item._id)}
+                  className="px-4 py-2 bg-red-600 text-sm font-medium text-white rounded-md"
+                >
+                  Delete
+                </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </Layout>

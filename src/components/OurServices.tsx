@@ -39,11 +39,11 @@ const renderIcon = (iconName: string) => {
 
   return (
     <div>
-      <h4 className="text-center text-xl text-cyan-600">Our Services </h4>
+      <h4 className="text-center text-xl text-cyan-600 mt-20">Our Services </h4>
       <div className="grid grid-1  md:grid-2 lg:grid-cols-4  gap-5 mx-5 lg:mx-20 mt-10">
         {services.map((service) => (
           <div key={service._id} className="bg-[#297B66] p-5 rounded  ">
-            {renderIcon(service.icon)}
+           < div className="mx-auto  h-50 ">  {renderIcon(service.icon)}</div> 
             <h3 className="text-xl text-center py-5 text-cyan-500">
               {service.title}
             </h3>

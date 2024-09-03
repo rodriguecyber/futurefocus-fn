@@ -15,7 +15,7 @@ const Footer = () => {
   return (
     <div className="bg-blue-950 w-full text-white py-10">
       <div className="container mx-auto px-5">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-5  ">
           {/* Quick Links */}
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4">Quick Links</h1>
@@ -119,9 +119,9 @@ const Footer = () => {
               <input
                 type="email"
                 placeholder="Your email"
-                className="py-3 px-3 flex-1 border-none outline-none text-black"
+                className="py-3 px-2 flex-1 border-none outline-none text-black"
               />
-              <button className="bg-cyan-800 py-3 px-4">Subscribe</button>
+              <button className="bg-cyan-800 py-3 px-2">Subscribe</button>
             </div>
           </div>
         </div>
