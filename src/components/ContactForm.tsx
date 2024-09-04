@@ -139,6 +139,9 @@ const ContactForm = () => {
               Message
             </label>
           </div>
+          <div className="w-full">
+            <button className="bg-blue-600 p-2  text-white  ">SEND</button>
+          </div>
         </form>
       </div>
     </div>
