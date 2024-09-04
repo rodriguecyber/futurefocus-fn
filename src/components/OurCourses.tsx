@@ -64,7 +64,7 @@ useEffect(() => {
                   href="/application"
                   className="px-5 py-2 bg-cyan-700 text-center rounded-lg hover:bg-cyan-600"
                 >
-                  Join Now
+                  APPLY NOW
                 </a>
               </div>
             </div>

@@ -17,8 +17,39 @@ interface ApplicationData {
   message: string;
 }
 
-const shiftOptions = ["Morning", "Afternoon", "Evening", "Weekend"];
-
+const allShiftOptions = {
+  default: [
+    "Morning A (8:30 AM - 10:30 AM)",
+    "Morning B (11:00 PM- 1:00PM)",
+    "Afternoon (3:00PM - 5:00 PM)",
+    "Evening (6:00 AM - 8:00PM)",
+    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
+  ],
+  softwareDevelopment: [
+    "Morning A (8:30 AM - 10:30 AM)",
+    "Morning B (11:00 PM- 1:00PM)",
+    "Afternoon (3:00PM - 5:00 PM)",
+    "Evening (6:00 AM - 8:00PM)",
+    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
+    "Online",
+  ],
+  mobileAppDevelopment: [
+    "Morning A (8:30 AM - 10:30 AM)",
+    "Morning B (11:00 PM- 1:00PM)",
+    "Afternoon (3:00PM - 5:00 PM)",
+    "Evening (6:00 AM - 8:00PM)",
+    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
+    "Online",
+  ],
+  webDevelopment: [
+    "Morning A (8:30 AM - 10:30 AM)",
+    "Morning B (11:00 PM- 1:00PM)",
+    "Afternoon (3:00PM - 5:00 PM)",
+    "Evening (6:00 AM - 8:00PM)",
+    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
+    "Online",
+  ],
+};
 
 const ApplicationForm: React.FC = () => {
   const [formData, setFormData] = useState<ApplicationData>({
@@ -26,16 +57,17 @@ const ApplicationForm: React.FC = () => {
     email: "",
     phone: "",
     selectedCourse: "",
-    selectedShift: shiftOptions[0], 
+    selectedShift: "",
     message: "",
   });
-
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [shiftOptions, setShiftOptions] = useState<string[]>(
+    allShiftOptions.default
+  );
 
   useEffect(() => {
-
     const fetchCourses = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/course`);
@@ -44,8 +76,9 @@ const ApplicationForm: React.FC = () => {
         if (response.data.length > 0) {
           setFormData((prevData) => ({
             ...prevData,
-            selectedCourse: response.data[0].title, 
+            selectedCourse: response.data[0].title,
           }));
+          updateShifts(response.data[0].title);
         }
         setLoading(false);
       } catch (err) {
@@ -57,6 +90,22 @@ const ApplicationForm: React.FC = () => {
     fetchCourses();
   }, []);
 
+  const updateShifts = (courseTitle: string) => {
+    let shifts = allShiftOptions.default;
+    if (courseTitle === "SOFTWARE DEVELOPMENT") {
+      shifts = allShiftOptions.softwareDevelopment;
+    } else if (courseTitle ==="MOBILE APP DEVELOPMENT") {
+      shifts = allShiftOptions.mobileAppDevelopment;
+    } else if (courseTitle.includes("WEB DEVELOPMENT")) {
+      shifts = allShiftOptions.webDevelopment;
+    }
+    setShiftOptions(shifts);
+    setFormData((prevData) => ({
+      ...prevData,
+      selectedShift: shifts[0],
+    }));
+  };
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -67,6 +116,10 @@ const ApplicationForm: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
+
+    if (name === "selectedCourse") {
+      updateShifts(value);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,19 +138,18 @@ const ApplicationForm: React.FC = () => {
 
       console.log("Success:", response.data);
 
-      
       setFormData({
         name: "",
         email: "",
         phone: "",
         selectedCourse: courses.length > 0 ? courses[0].title : "",
-        selectedShift: shiftOptions[0], 
+        selectedShift: shiftOptions[0],
         message: "",
       });
-   toast.success('application submitted')
+      toast.success("Application submitted");
     } catch (error) {
       console.error("Error:", error);
-      toast.error('error in application try again!')
+      toast.error("Error in application, please try again!");
     }
   };
 
@@ -111,7 +163,12 @@ const ApplicationForm: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
-      <a href="/" className="p-2 fixed top-3 left-1 bg-blue-600 text-white hover:bg-blue-500 rounded-md">Back home</a>
+      <a
+        href="/"
+        className="p-2 fixed top-3 left-1 bg-blue-600 text-white hover:bg-blue-500 rounded-md"
+      >
+        Back home
+      </a>
       <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
         Apply for a Scholarship
       </h2>

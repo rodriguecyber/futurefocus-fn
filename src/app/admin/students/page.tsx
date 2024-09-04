@@ -78,7 +78,7 @@ const StudentManagement: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
+      <div className="max-w-9xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
         <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
           Applied Students
         </h2>
@@ -94,6 +94,10 @@ const StudentManagement: React.FC = () => {
               </th>
               <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-gray-800 tracking-wider">
                 Phone
+              </th>
+
+              <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-gray-800 tracking-wider">
+                Course
               </th>
               <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-gray-800 tracking-wider">
                 Shift
@@ -116,6 +120,9 @@ const StudentManagement: React.FC = () => {
                   {student.phone}
                 </td>
                 <td className="px-6 py-4 border-b border-gray-300">
+                  {student.selectedCourse}
+                </td>
+                <td className="px-6 py-4 border-b border-gray-300">
                   {student.selectedShift}
                 </td>
                 <td className="px-6 py-4 border-b border-gray-300">
@@ -125,12 +132,7 @@ const StudentManagement: React.FC = () => {
                   >
                     View
                   </button>
-                  <button
-                    onClick={() => handleEdit(student.id)}
-                    className="text-blue-600 hover:text-blue-900 mr-3"
-                  >
-                    Edit
-                  </button>
+                
                   <button
                     onClick={() => handleDelete(student.id)}
                     className="text-red-600 hover:text-red-900 mr-3"
