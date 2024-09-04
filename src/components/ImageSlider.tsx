@@ -22,6 +22,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [slidesToShow, setSlidesToShow] = useState(1);
 
   const nextSlide = useCallback(() => {
     if (slides.length > 0) {
@@ -38,6 +39,20 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       return () => clearInterval(interval);
     }
   }, [nextSlide, isLoading, slides.length]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setSlidesToShow(4);
+      } else {
+        setSlidesToShow(1);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const prevSlide = () => {
     if (slides.length > 0) {
@@ -63,7 +78,9 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
     return (
       <div
-        className="transition-all duration-300 ease-in-out w-1/4 px-2"
+        className={`transition-all duration-300 ease-in-out w-full ${
+          slidesToShow === 2 ? "md:w-1/2" : ""
+        } px-2`}
         key={adjustedIndex}
       >
         {slide.type === "image" ? (
@@ -102,7 +119,11 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
   const getSkeletonContent = () => {
     return (
-      <div className="transition-all duration-300 ease-in-out w-1/4 px-2">
+      <div
+        className={`transition-all duration-300 ease-in-out w-full ${
+          slidesToShow === 2 ? "md:w-1/2" : ""
+        } px-2`}
+      >
         <div
           className="bg-gray-200 rounded-md animate-pulse"
           style={{ aspectRatio: "3/2" }}
@@ -115,7 +136,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     <div className="pt-1 w-screen bg-cover bg-center relative">
       <div className="relative z-10">
         <div className="flex justify-center items-center overflow-hidden">
-          {[0, 1, 2, 3].map((index) => (
+          {Array.from({ length: slidesToShow }).map((_, index) => (
             <React.Fragment key={index}>{getSkeletonContent()}</React.Fragment>
           ))}
         </div>
@@ -153,13 +174,11 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       />
       <div className="relative z-10">
         <div className="flex justify-center items-center overflow-hidden">
-          {[0, 1, 2, 3].map((offset) => getSlideContent(currentIndex + offset))}
+          {Array.from({ length: slidesToShow }).map((_, offset) =>
+            getSlideContent(currentIndex + offset)
+          )}
         </div>
-        {/* <div className="text-center mt-5 px-4">
-          <p className="text-sm md:text-lg lg:text-xl">
-            {slides[currentIndex].content}
-          </p>
-        </div> */}
+
         <div className="flex justify-center mt-4">
           <button
             onClick={prevSlide}

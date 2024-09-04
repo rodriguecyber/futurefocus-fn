@@ -69,7 +69,7 @@ const StudentManagement: React.FC = () => {
   const handleReject = async (id: string) => {
     try {
       await axios.post(`${API_BASE_URL}/students/${id}/reject`);
-      // Handle success, e.g., refresh data
+      
     } catch (error) {
       console.error("Error rejecting student:", error);
       setError("Failed to reject student. Please try again.");
