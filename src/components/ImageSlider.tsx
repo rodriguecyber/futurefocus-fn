@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import YouTube from "react-youtube";
 import { FaGreaterThan, FaLessThan } from "react-icons/fa";
@@ -18,6 +18,14 @@ interface ImageVideoSliderProps {
 const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({ slides }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000); // Auto-slide every 5 seconds
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [currentIndex]);
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
@@ -98,7 +106,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({ slides }) => {
               backgroundImage: `url(${slides[currentIndex].url})`,
               backgroundSize: "cover",
               backgroundPosition: "center",
-              filter: "blur(10px)",
+              filter: "blur(10px)", // Default background image blur
             }}
           />
           <div className="relative z-10">
