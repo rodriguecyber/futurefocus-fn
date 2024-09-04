@@ -33,9 +33,9 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     if (!isLoading && slides.length > 0) {
       const interval = setInterval(() => {
         nextSlide();
-      }, 5000); // Auto-slide every 5 seconds
+      }, 2500);
 
-      return () => clearInterval(interval); // Cleanup interval on component unmount
+      return () => clearInterval(interval);
     }
   }, [nextSlide, isLoading, slides.length]);
 
@@ -93,6 +93,9 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
             </div>
           </div>
         )}
+        <p className="text-center mt-2 text-sm md:text-lg lg:text-xl">
+          {slide.content}
+        </p>
       </div>
     );
   };
@@ -152,11 +155,11 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
         <div className="flex justify-center items-center overflow-hidden">
           {[0, 1, 2, 3].map((offset) => getSlideContent(currentIndex + offset))}
         </div>
-        <div className="text-center mt-5 px-4">
+        {/* <div className="text-center mt-5 px-4">
           <p className="text-sm md:text-lg lg:text-xl">
             {slides[currentIndex].content}
           </p>
-        </div>
+        </div> */}
         <div className="flex justify-center mt-4">
           <button
             onClick={prevSlide}
