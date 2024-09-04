@@ -24,7 +24,11 @@ const OurServices = () => {
  }, []);
 const renderIcon = (iconName: string) => {
   const IconComponent = FaIcons[iconName as keyof typeof FaIcons]; // Get the icon component by name
-  return IconComponent ? <IconComponent /> : <FaIcons.FaStar />; // Default to FaStar if icon not found
+  return IconComponent ? (
+    <IconComponent className="text-7xl mx-auto " />
+  ) : (
+    <FaIcons.FaStar className="text-7xl mx-auto" />
+  ); // Default to FaStar if icon not found
 };
  const fetchServices = async () => {
    try {
