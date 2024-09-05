@@ -7,7 +7,7 @@ import API_BASE_URL from "@/config/baseURL";
 import { X } from "lucide-react";
 
 interface Student {
-  id: string;
+  _id: string;
   name: string;
   email: string;
   phone: string;
@@ -44,7 +44,7 @@ const StudentManagement: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await axios.delete(`${API_BASE_URL}/students/${id}`);
-      setStudents(students.filter((student) => student.id !== id));
+      setStudents(students.filter((student) => student._id !== id));
       setSelectedStudent(null);
     } catch (error) {
       console.error("Error deleting student:", error);
@@ -112,7 +112,7 @@ const StudentManagement: React.FC = () => {
           </thead>
           <tbody>
             {students.map((student) => (
-              <tr key={student.id}>
+              <tr key={student._id}>
                 <td className="px-6 py-4 border-b border-gray-300">
                   {student.name}
                 </td>
@@ -133,19 +133,19 @@ const StudentManagement: React.FC = () => {
                     View
                   </button>
                   <button
-                    onClick={() => handleDelete(student.id)}
+                    onClick={() => handleDelete(student._id)}
                     className="text-red-600 hover:text-red-900 mr-3"
                   >
                     Delete
                   </button>
                   <button
-                    onClick={() => handleAdmit(student.id)}
+                    onClick={() => handleAdmit(student._id)}
                     className="text-green-600 hover:text-green-900 mr-3"
                   >
                     Admit
                   </button>
                   <button
-                    onClick={() => handleReject(student.id)}
+                    onClick={() => handleReject(student._id)}
                     className="text-red-600 hover:text-red-900"
                   >
                     Reject
