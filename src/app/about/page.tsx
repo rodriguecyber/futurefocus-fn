@@ -13,7 +13,7 @@ const About = () => {
         <h1 className='text-5xl mb-4'>About Us</h1>
         <p className='text-xl'>Home / About</p>
       </div>
-      <OurServices/>
+      {/* <OurServices/> */}
       <WhyUs/>
       <OurTeam/>
       <Footer/>

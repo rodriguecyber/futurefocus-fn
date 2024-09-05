@@ -94,7 +94,7 @@ const ApplicationForm: React.FC = () => {
     let shifts = allShiftOptions.default;
     if (courseTitle === "SOFTWARE DEVELOPMENT") {
       shifts = allShiftOptions.softwareDevelopment;
-    } else if (courseTitle ==="MOBILE APP DEVELOPMENT") {
+    } else if (courseTitle === "MOBILE APP DEVELOPMENT") {
       shifts = allShiftOptions.mobileAppDevelopment;
     } else if (courseTitle.includes("WEB DEVELOPMENT")) {
       shifts = allShiftOptions.webDevelopment;
@@ -136,7 +136,11 @@ const ApplicationForm: React.FC = () => {
         }
       );
 
-      console.log("Success:", response.data);
+      if (response.data && response.data.message) {
+        toast.success(response.data.message);
+      } else {
+        toast.success("Application submitted successfully");
+      }
 
       setFormData({
         name: "",
@@ -146,10 +150,16 @@ const ApplicationForm: React.FC = () => {
         selectedShift: shiftOptions[0],
         message: "",
       });
-      toast.success("Application submitted");
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Error in application, please try again!");
+      if (axios.isAxiosError(error) && error.response) {
+        // Display error message from the backend if available
+        const errorMessage =
+          error.response.data.message || "An error occurred. Please try again.";
+          console.log(error.response.data);
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     }
   };
 
@@ -170,7 +180,7 @@ const ApplicationForm: React.FC = () => {
         Back home
       </a>
       <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
-      Fill the Form Correctly
+        Fill the Form Correctly
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

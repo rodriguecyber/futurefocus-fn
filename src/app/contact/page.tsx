@@ -15,7 +15,7 @@ const About = () => {
       </div>
       <ContactForm />
       {/* <WhyUs /> */}
-      <OurTeam />
+      {/* <OurTeam /> */}
       <Footer/>
     </div>
   );
