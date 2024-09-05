@@ -25,7 +25,7 @@ const withAdminAuth = <P extends object>(WrappedComponent: React.FC) => {
 
     if (loading) {
      
-      return <p className="animate-spin items-start mx-auto "><FaSpinner size={10} color="blue"/></p>;
+      return <p className=" items-start mx-auto "><FaSpinner size={1} color="blue"/></p>;
     }
 
    ;
