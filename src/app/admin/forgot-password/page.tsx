@@ -1,12 +1,10 @@
 "use client";
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
-import { response } from "express";
-import { get } from "http";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
-const page = () => {
+const Page = () => {
     const [isLoading, setIsLoading] = useState(false)
   const [email, setEmail] = useState("");
   const handleChangeEmail = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,4 +63,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
