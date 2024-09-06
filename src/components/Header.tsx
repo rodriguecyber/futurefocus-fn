@@ -17,8 +17,7 @@ const Header = () => {
           href="/application"
           className="flex flex-row items-center gap-1 lg:hidden bg-green-900 p-2 text-white  lg:w-auto  "
         >
-          <h1 className="text-sm">APPLY TODAY</h1>
-          <FaArrowRight />
+          <h1 className="text-sm">APPLY NOW</h1>
         </a>
         <FaBars
           width={32}
@@ -51,9 +50,9 @@ const Header = () => {
         </div>
         <a
           href="/application"
-          className="flex flex-row items-center gap-1 bg-green-900 p-2 text-white w-full lg:w-auto  "
+          className="hidden lg:flex flex-row items-center gap-1 bg-green-900 p-2 text-white w-full lg:w-auto  "
         >
-          <h1 className="text-sm">APPLY TODAY</h1>
+          <h1 className="text-sm">APPLY NOW</h1>
           <FaArrowRight />
         </a>
       </div>

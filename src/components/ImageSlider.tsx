@@ -34,7 +34,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     if (!isLoading && slides.length > 0) {
       const interval = setInterval(() => {
         nextSlide();
-      }, 2500);
+      }, 3500);
 
       return () => clearInterval(interval);
     }

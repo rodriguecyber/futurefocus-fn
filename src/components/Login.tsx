@@ -35,12 +35,12 @@ const LoginForm = () => {
         Back
       </a>
       <div className="bg-white p-8 rounded-lg shadow-lg w-96">
-        {/* Logo */}
+     
         <div className="text-center mb-6">
           <img src="/logo.png" alt="Logo" className="w-24 h-24 mx-auto" />
         </div>
 
-        {/* Login Form */}
+   
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label
@@ -90,7 +90,7 @@ const LoginForm = () => {
                 Remember me
               </label>
             </div>
-            <a href="##" className="text-blue-600 hover:text-blue-800 text-sm">
+            <a href="/admin/forgot-password" className="text-blue-600 hover:text-blue-800 text-sm">
               Forgot password?
             </a>
           </div>
