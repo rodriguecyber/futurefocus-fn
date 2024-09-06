@@ -22,7 +22,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [slidesToShow, setSlidesToShow] = useState(1);
+  const [slidesToShow, setSlidesToShow] = useState(3);
 
   const nextSlide = useCallback(() => {
     if (slides.length > 0) {
@@ -40,20 +40,6 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     }
   }, [nextSlide, isLoading, slides.length]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) {
-        setSlidesToShow(4);
-      } else {
-        setSlidesToShow(1);
-      }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   const prevSlide = () => {
     if (slides.length > 0) {
       setCurrentIndex(
@@ -69,17 +55,21 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     return match && match[2].length === 11 ? match[2] : null;
   };
 
-  const getSlideContent = (index: number) => {
+  const getSlideContent = (index: number, middleIndex: number) => {
     if (slides.length === 0) return null;
     const adjustedIndex = (index + slides.length) % slides.length;
     const slide = slides[adjustedIndex];
 
     if (!slide) return null;
 
+    const isMiddleSlide = index === middleIndex;
+
     return (
       <div
-        className={`transition-all duration-300 ease-in-out w-full ${
-          slidesToShow === 2 ? "md:w-1/2" : ""
+        className={`transition-all duration-300 ease-in-out ${
+          isMiddleSlide
+            ? "w-full md:w-1/3 lg:w-1/3"
+            : "w-full md:w-1/4 lg:w-1/4"
         } px-2`}
         key={adjustedIndex}
       >
@@ -88,7 +78,9 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
             <img
               src={slide.url}
               alt={`Slide ${adjustedIndex}`}
-              className="w-full h-full object-cover rounded-md"
+              className={`w-full h-full object-cover rounded-md ${
+                isMiddleSlide ? "transform scale-105" : ""
+              }`}
               style={{ aspectRatio: "3/2" }}
             />
           </Link>
@@ -101,7 +93,9 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
             <img
               src={slide.url}
               alt={`Video thumbnail ${adjustedIndex}`}
-              className="w-full h-full object-cover rounded-md"
+              className={`w-full h-full object-cover rounded-md ${
+                isMiddleSlide ? "transform scale-105" : ""
+              }`}
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="bg-black bg-opacity-50 rounded-full p-4 transition-all duration-300 group-hover:bg-opacity-75">
@@ -175,7 +169,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       <div className="relative z-10">
         <div className="flex justify-center items-center overflow-hidden">
           {Array.from({ length: slidesToShow }).map((_, offset) =>
-            getSlideContent(currentIndex + offset)
+            getSlideContent(currentIndex + offset - 1, currentIndex)
           )}
         </div>
 
