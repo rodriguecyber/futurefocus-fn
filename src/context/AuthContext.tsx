@@ -1,16 +1,13 @@
 import axios from "axios";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import API_BASE_URL from "@/config/baseURL";
+
 interface Admin {
   email: string;
   password: string;
+  isSuperAdmin: boolean;
 }
 
 interface TeamMember {
@@ -25,6 +22,7 @@ interface TeamMember {
 interface AuthContextData {
   signed: boolean;
   isLoading: boolean;
+  loggedUser: Admin | null;
   login: (user: Admin) => Promise<void>;
   fetchTeam: () => Promise<TeamMember[]>;
   addTeamMember: (newMember: Omit<TeamMember, "_id">) => Promise<void>;
@@ -37,14 +35,12 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-
-
 export const AuthContext = createContext<AuthContextData>(
   {} as AuthContextData
 );
 
 const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
-  const [loggedUser, setUser] = useState<Admin | null>(null);
+  const [loggedUser, setLoggedUser] = useState<Admin | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async (userData: Admin) => {
@@ -55,7 +51,7 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
         userData,
         { withCredentials: true }
       );
-      setUser(response.data);
+      setLoggedUser(response.data);
       toast.success("Login successful");
       localStorage.setItem("ffa-admin", response.data.token);
       window.location.href = "/admin";
@@ -66,14 +62,12 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const fetchTeam = async (
-  ): Promise<TeamMember[]> => {
+  const fetchTeam = async (): Promise<TeamMember[]> => {
     setIsLoading(true);
     try {
-     const token = localStorage.getItem('ffa-admin')
-      const response = await axios.get(`${API_BASE_URL}/member`, {     
+      const response = await axios.get(`${API_BASE_URL}/member`, {
+        withCredentials: true,
       });
-      console.log(response.data)
       return response.data;
     } catch (error: any) {
       handleAxiosError(error);
@@ -91,7 +85,6 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
         newMember,
         { withCredentials: true }
       );
-      
       toast.success("Member added successfully");
       return response.data;
     } catch (error: any) {
@@ -136,7 +129,8 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
         {},
         { withCredentials: true }
       );
-      setUser(null);
+      setLoggedUser(null);
+      localStorage.removeItem("ffa-admin");
       window.location.href = "/admin/login";
     } catch (error: any) {
       handleAxiosError(error);
@@ -162,8 +156,9 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
     <AuthContext.Provider
       value={{
         signed: Boolean(loggedUser),
-        login,
         isLoading,
+        loggedUser,
+        login,
         fetchTeam,
         addTeamMember,
         updateTeamMember,

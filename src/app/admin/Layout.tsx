@@ -1,22 +1,28 @@
-import React, { ReactNode } from "react";
+'use client'
+import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
-import withAdminAuth from "@/components/withAdminAuth";
+import { useAuth } from "@/context/AuthContext";
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const handleLogout  = ()=>{
-    localStorage.removeItem("ffa-admin")
-    window.location.href='/admin/login'
-  }
+  const {  logout } = useAuth();
+
+
+ 
+
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
-   
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex   justify-between h-16">
+          <div className="flex justify-between h-16">
             <div className="flex">
               <Link href="/admin" className="flex-shrink-0 flex items-center">
                 Admin Panel
@@ -32,7 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                   href="/admin/students"
                   className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-300 text-sm font-medium"
                 >
-                  Students
+                  Candidates
                 </Link>
                 <Link
                   href="/admin/services"
@@ -46,9 +52,22 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 >
                   Courses
                 </Link>
+            
+                  <Link
+                    href="/admin/admins"
+                    className="text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 border-transparent hover:border-gray-300 text-sm font-medium"
+                  >
+                    Admins
+                  </Link>
+                
               </div>
             </div>
-              <button onClick={handleLogout} className=" text-red-600 hover:text-red-400 p-0 ">Logout</button>
+            <button
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-400 p-0"
+            >
+              Logout
+            </button>
           </div>
         </div>
       </nav>
@@ -57,4 +76,4 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default Layout
+export default Layout;

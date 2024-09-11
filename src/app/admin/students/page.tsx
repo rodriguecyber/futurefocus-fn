@@ -15,28 +15,30 @@ interface Student {
   message: string;
   selectedShift: string;
   createdAt: string;
+  status:string
 }
 
 const StudentManagement: React.FC = () => {
   const [students, setStudents] = useState<Student[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  const fetchStudents = async () => {
+    try {
+      const response = await axios.get<Student[]>(`${API_BASE_URL}/students`);
+      setStudents(
+        response.data.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )
+      );
+    } catch (error) {
+      console.error("Error fetching student data:", error);
+      setError("Failed to load student data. Please try again later.");
+    }
+  };
 
   useEffect(() => {
-    const fetchStudents = async () => {
-      try {
-        const response = await axios.get<Student[]>(`${API_BASE_URL}/students`);
-        setStudents(
-          response.data.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          )
-        );
-      } catch (error) {
-        console.error("Error fetching student data:", error);
-        setError("Failed to load student data. Please try again later.");
-      }
-    };
+     fetchStudents()
 
     fetchStudents();
   }, []);
@@ -58,7 +60,8 @@ const StudentManagement: React.FC = () => {
 
   const handleAdmit = async (id: string) => {
     try {
-      await axios.post(`${API_BASE_URL}/students/${id}/admit`);
+      await axios.put(`${API_BASE_URL}/students/${id}`);
+      await fetchStudents()
     } catch (error) {
       console.error("Error admitting student:", error);
       setError("Failed to admit student. Please try again.");
@@ -67,11 +70,11 @@ const StudentManagement: React.FC = () => {
 
   const handleReject = async (id: string) => {
     try {
-      await axios.post(`${API_BASE_URL}/students/${id}/reject`);
+      await axios.put(`${API_BASE_URL}/students/${id}/reject`);
       // Handle success, e.g., refresh data
     } catch (error) {
       console.error("Error rejecting student:", error);
-      setError("Failed to reject student. Please try again.");
+      // setError("Failed to reject student. Please try again.");
     }
   };
 
@@ -87,7 +90,7 @@ const StudentManagement: React.FC = () => {
     <Layout>
       <div className="max-w-full mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
         <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
-          Applied Students
+          Applied Candidates
         </h2>
         {error && <p className="text-red-600">{error}</p>}
         <table className="min-w-full bg-white">
@@ -103,7 +106,7 @@ const StudentManagement: React.FC = () => {
                 Course
               </th>
               <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-gray-800 tracking-wider">
-               Shift
+                Shift
               </th>
               <th className="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-gray-800 tracking-wider">
                 Actions
@@ -112,7 +115,12 @@ const StudentManagement: React.FC = () => {
           </thead>
           <tbody>
             {students.map((student) => (
-              <tr key={student._id}>
+              <tr
+                key={student._id}
+                className={`${
+                  student.status === "accepted" ? "bg-yellow-50" : ""
+                }`}
+              >
                 <td className="px-6 py-4 border-b border-gray-300">
                   {student.name}
                 </td>
@@ -169,7 +177,7 @@ const StudentManagement: React.FC = () => {
                 <X size={24} />
               </button>
             </div>
-            <div className="space-y-2">
+            <div className="space-y-2  overflow-auto">
               <p>
                 <strong>Name:</strong> {selectedStudent.name}
               </p>
@@ -189,7 +197,7 @@ const StudentManagement: React.FC = () => {
                 <strong>Date Applied:</strong>{" "}
                 {formatDate(selectedStudent.createdAt)}
               </p>
-              <p>
+              <p className="max-h-32 ">
                 <strong>Message:</strong> {selectedStudent.message}
               </p>
             </div>

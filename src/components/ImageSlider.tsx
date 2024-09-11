@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import Link from "next/link";
-import YouTube from "react-youtube";
-import { FaGreaterThan, FaLessThan, FaPlay } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight, FaPlay, FaPause } from "react-icons/fa";
 
 export interface SlideItem {
   type: "image" | "video";
   url: string;
   content: string;
-  videoUrl?: string;
   link?: string;
 }
 
@@ -21,8 +18,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
   isLoading = false,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [slidesToShow, setSlidesToShow] = useState(3);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const nextSlide = useCallback(() => {
     if (slides.length > 0) {
@@ -30,184 +26,113 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     }
   }, [slides.length]);
 
-  useEffect(() => {
-    if (!isLoading && slides.length > 0) {
-      const interval = setInterval(() => {
-        nextSlide();
-      }, 3500);
-
-      return () => clearInterval(interval);
-    }
-  }, [nextSlide, isLoading, slides.length]);
-
-  const prevSlide = () => {
+  const prevSlide = useCallback(() => {
     if (slides.length > 0) {
       setCurrentIndex(
         (prevIndex) => (prevIndex - 1 + slides.length) % slides.length
       );
     }
+  }, [slides.length]);
+
+  useEffect(() => {
+    if (!isLoading && slides.length > 0 && isPlaying) {
+      const interval = setInterval(() => {
+        nextSlide();
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [nextSlide, isLoading, slides.length, isPlaying]);
+
+  const getSlideClass = (index: number) => {
+    if (index === currentIndex) {
+      return "translate-x-0";
+    } else if (index === (currentIndex - 1 + slides.length) % slides.length) {
+      return "-translate-x-full";
+    } else if (index === (currentIndex + 1) % slides.length) {
+      return "translate-x-full";
+    } else {
+      return "hidden";
+    }
   };
 
-  const extractYouTubeId = (url: string): string | null => {
-    const regExp =
-      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    const match = url.match(regExp);
-    return match && match[2].length === 11 ? match[2] : null;
-  };
-
-  const getSlideContent = (index: number, middleIndex: number) => {
-    if (slides.length === 0) return null;
-    const adjustedIndex = (index + slides.length) % slides.length;
-    const slide = slides[adjustedIndex];
-
-    if (!slide) return null;
-
-    const isMiddleSlide = index === middleIndex;
-
+  const getSlideContent = (slide: SlideItem, index: number) => {
     return (
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          isMiddleSlide
-            ? "w-full md:w-1/3 lg:w-1/3"
-            : "w-full md:w-1/4 lg:w-1/4"
-        } px-2`}
-        key={adjustedIndex}
+        key={index}
+        className={`absolute w-full h-full transition-transform duration-500 ease-in-out ${getSlideClass(
+          index
+        )}`}
       >
         {slide.type === "image" ? (
-          <Link href={slide.link || "#"}>
-            <img
-              src={slide.url}
-              alt={`Slide ${adjustedIndex}`}
-              className={`w-full h-full object-cover rounded-md ${
-                isMiddleSlide ? "transform scale-105" : ""
-              }`}
-              style={{ aspectRatio: "3/2" }}
-            />
-          </Link>
+          <img
+            src={slide.url}
+            alt={slide.content}
+            className="w-full h-full object-cover"
+          />
         ) : (
-          <div
-            className="relative cursor-pointer group"
-            onClick={() => setIsModalOpen(true)}
-            style={{ aspectRatio: "3/2" }}
-          >
-            <img
-              src={slide.url}
-              alt={`Video thumbnail ${adjustedIndex}`}
-              className={`w-full h-full object-cover rounded-md ${
-                isMiddleSlide ? "transform scale-105" : ""
-              }`}
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="bg-black bg-opacity-50 rounded-full p-4 transition-all duration-300 group-hover:bg-opacity-75">
-                <FaPlay className="text-white text-3xl" />
-              </div>
-            </div>
+          <div className="w-full h-full bg-black flex items-center justify-center">
+            <FaPlay className="text-white text-6xl" />
           </div>
         )}
-        <p className="text-center mt-2 text-sm md:text-lg lg:text-xl">
-          {slide.content}
-        </p>
       </div>
     );
   };
-
-  const getSkeletonContent = () => {
-    return (
-      <div
-        className={`transition-all duration-300 ease-in-out w-full ${
-          slidesToShow === 2 ? "md:w-1/2" : ""
-        } px-2`}
-      >
-        <div
-          className="bg-gray-200 rounded-md animate-pulse"
-          style={{ aspectRatio: "3/2" }}
-        ></div>
-      </div>
-    );
-  };
-
-  const renderSkeletonSlider = () => (
-    <div className="pt-1 w-screen bg-cover bg-center relative">
-      <div className="relative z-10">
-        <div className="flex justify-center items-center overflow-hidden">
-          {Array.from({ length: slidesToShow }).map((_, index) => (
-            <React.Fragment key={index}>{getSkeletonContent()}</React.Fragment>
-          ))}
-        </div>
-        <div className="text-center mt-5 px-4">
-          <div className="h-6 bg-gray-200 rounded-md animate-pulse w-3/4 mx-auto"></div>
-        </div>
-        <div className="flex justify-center mt-4">
-          <div className="mx-2 px-2 py-1 md:px-4 md:py-2 bg-gray-200 rounded animate-pulse w-10 h-10"></div>
-          <div className="mx-2 px-2 py-1 md:px-4 md:py-2 bg-gray-200 rounded animate-pulse w-10 h-10"></div>
-        </div>
-      </div>
-    </div>
-  );
 
   if (isLoading || slides.length === 0) {
-    return renderSkeletonSlider();
+    return <div className="w-full h-[400px] bg-gray-200 animate-pulse"></div>;
   }
 
-  return (
-    <div
-      className="pt-1 w-screen bg-cover bg-center relative"
-      style={{
-        backgroundImage:
-          "url('https://barkleypd.com/wp-content/uploads/2023/01/AdobeStock_34360454-scaled.jpeg')",
-      }}
-    >
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: `url(${slides[currentIndex].url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          filter: "blur(10px)",
-        }}
-      />
-      <div className="relative z-10">
-        <div className="flex justify-center items-center overflow-hidden">
-          {Array.from({ length: slidesToShow }).map((_, offset) =>
-            getSlideContent(currentIndex + offset - 1, currentIndex)
-          )}
-        </div>
+  const currentSlide = slides[currentIndex];
 
-        <div className="flex justify-center mt-4">
+  return (
+    <div className="relative w-full h-[400px] bg-black overflow-hidden">
+      <div className="relative w-full h-[350px]">
+        {slides.map((slide, index) => getSlideContent(slide, index))}
+      </div>
+
+      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
+        <div className="flex items-center justify-around w-full mx-auto mb-2">
           <button
             onClick={prevSlide}
-            className="mx-2 px-2 py-1 md:px-4 md:py-2 bg-blue-500 text-white rounded"
+            className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
           >
-            <FaLessThan />
+            <FaChevronLeft />
           </button>
+
+          <div className="flex flex-col items-center">
+            <div>
+              <p className="text-lg">{currentSlide.content}</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="flex space-x-2">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${
+                      index === currentIndex ? "bg-white" : "bg-gray-400"
+                    }`}
+                    onClick={() => setCurrentIndex(index)}
+                  ></button>
+                ))}
+              </div>
+              <button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
+              >
+                {isPlaying ? <FaPause /> : <FaPlay />}
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={nextSlide}
-            className="mx-2 px-2 py-1 md:px-4 md:py-2 bg-blue-500 text-white rounded"
+            className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
           >
-            <FaGreaterThan />
+            <FaChevronRight />
           </button>
         </div>
       </div>
-      {isModalOpen &&
-        slides[currentIndex].type === "video" &&
-        slides[currentIndex].videoUrl && (
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-            onClick={() => setIsModalOpen(false)}
-          >
-            <div
-              className="bg-white p-4 rounded-lg"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <YouTube
-                videoId={
-                  extractYouTubeId(slides[currentIndex].videoUrl!) || undefined
-                }
-                opts={{ width: "100%", height: "360px" }}
-              />
-            </div>
-          </div>
-        )}
     </div>
   );
 };
