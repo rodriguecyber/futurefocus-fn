@@ -7,6 +7,7 @@ const LoginForm = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
+    isSuperAdmin:false
   });
 
   const handleChangeFormData = (e: React.ChangeEvent<HTMLInputElement>) => {
