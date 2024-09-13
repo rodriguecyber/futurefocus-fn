@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 
 interface Course {
   title: string;
+  shifts: string[];
 }
 
 interface ApplicationData {
@@ -14,42 +15,9 @@ interface ApplicationData {
   phone: string;
   selectedCourse: string;
   selectedShift: string;
+  intake: string;
   message: string;
 }
-
-const allShiftOptions = {
-  default: [
-    "Morning A (8:30 AM - 10:30 AM)",
-    "Morning B (11:00 PM- 1:00PM)",
-    "Afternoon (3:00PM - 5:00 PM)",
-    "Evening (6:00 AM - 8:00PM)",
-    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
-  ],
-  softwareDevelopment: [
-    "Morning A (8:30 AM - 10:30 AM)",
-    "Morning B (11:00 PM- 1:00PM)",
-    "Afternoon (3:00PM - 5:00 PM)",
-    "Evening (6:00 AM - 8:00PM)",
-    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
-    "Online",
-  ],
-  mobileAppDevelopment: [
-    "Morning A (8:30 AM - 10:30 AM)",
-    "Morning B (11:00 PM- 1:00PM)",
-    "Afternoon (3:00PM - 5:00 PM)",
-    "Evening (6:00 AM - 8:00PM)",
-    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
-    "Online",
-  ],
-  webDevelopment: [
-    "Morning A (8:30 AM - 10:30 AM)",
-    "Morning B (11:00 PM- 1:00PM)",
-    "Afternoon (3:00PM - 5:00 PM)",
-    "Evening (6:00 AM - 8:00PM)",
-    "Weekend (Saturday: 8:30 AM - 5:30 PM)",
-    "Online",
-  ],
-};
 
 const ApplicationForm: React.FC = () => {
   const [formData, setFormData] = useState<ApplicationData>({
@@ -58,14 +26,13 @@ const ApplicationForm: React.FC = () => {
     phone: "",
     selectedCourse: "",
     selectedShift: "",
+    intake: "",
     message: "",
   });
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [shiftOptions, setShiftOptions] = useState<string[]>(
-    allShiftOptions.default
-  );
+  const [intakes, setIntakes] = useState<{ _id: string; intake: string }[]>([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -77,8 +44,8 @@ const ApplicationForm: React.FC = () => {
           setFormData((prevData) => ({
             ...prevData,
             selectedCourse: response.data[0].title,
+            selectedShift: response.data[0].shifts[0],
           }));
-          updateShifts(response.data[0].title);
         }
         setLoading(false);
       } catch (err) {
@@ -86,25 +53,24 @@ const ApplicationForm: React.FC = () => {
         setLoading(false);
       }
     };
-
+    const getIntakes = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/admin/intake`);
+        setIntakes(response.data.intakes);
+        if (response.data.length > 0) {
+          setFormData((prevData) => ({
+            ...prevData,
+            intake: response.data.intakes[0].intake,
+          
+          }));
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getIntakes();
     fetchCourses();
   }, []);
-
-  const updateShifts = (courseTitle: string) => {
-    let shifts = allShiftOptions.default;
-    if (courseTitle === "SOFTWARE DEVELOPMENT") {
-      shifts = allShiftOptions.softwareDevelopment;
-    } else if (courseTitle === "MOBILE APP DEVELOPMENT") {
-      shifts = allShiftOptions.mobileAppDevelopment;
-    } else if (courseTitle.includes("WEB DEVELOPMENT")) {
-      shifts = allShiftOptions.webDevelopment;
-    }
-    setShiftOptions(shifts);
-    setFormData((prevData) => ({
-      ...prevData,
-      selectedShift: shifts[0],
-    }));
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -118,7 +84,13 @@ const ApplicationForm: React.FC = () => {
     }));
 
     if (name === "selectedCourse") {
-      updateShifts(value);
+      const selectedCourse = courses.find((course) => course.title === value);
+      if (selectedCourse) {
+        setFormData((prevData) => ({
+          ...prevData,
+          selectedShift: selectedCourse.shifts[0],
+        }));
+      }
     }
   };
 
@@ -147,15 +119,16 @@ const ApplicationForm: React.FC = () => {
         email: "",
         phone: "",
         selectedCourse: courses.length > 0 ? courses[0].title : "",
-        selectedShift: shiftOptions[0],
+        selectedShift: courses.length > 0 ? courses[0].shifts[0] : "",
         message: "",
+        intake: intakes[0].intake,
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
         // Display error message from the backend if available
         const errorMessage =
           error.response.data.message || "An error occurred. Please try again.";
-          console.log(error.response.data);
+        console.log(error.response.data);
         toast.error(errorMessage);
       } else {
         toast.error("An unexpected error occurred. Please try again.");
@@ -251,9 +224,29 @@ const ApplicationForm: React.FC = () => {
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
-            {shiftOptions.map((shift) => (
-              <option key={shift} value={shift}>
-                {shift}
+            {courses
+              .find((course) => course.title === formData.selectedCourse)
+              ?.shifts.map((shift) => (
+                <option key={shift} value={shift}>
+                  {shift}
+                </option>
+              ))}
+          </select>
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">
+            Select an Intake
+          </label>
+          <select
+            name="intake"
+            value={formData.intake}
+            onChange={handleChange}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+          >
+            <option value="" disabled>{" select Intake (Required)"}</option>
+            {intakes.map((intake) => (
+              <option key={intake._id} value={intake.intake}>
+                {intake.intake}
               </option>
             ))}
           </select>

@@ -5,9 +5,14 @@ import axios from "axios";
 export interface Course {
   _id?: string;
   title: string;
-  image: string;
+  // description: string;
   rating: number;
+  image: string;
+  scholarship: number;
+  nonScholarship: number;
+  shifts: string[];
 }
+
 
 export const getCourses = async () => {
   return await axios.get<Course[]>(`${API_BASE_URL}/course/`);
