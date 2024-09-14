@@ -31,7 +31,7 @@ const OurTeam = () => {
     };
 
     loadTeamMembers();
-  }, [fetchTeam]); // Add fetchTeam to dependency array
+  }, []); 
 
   return (
     <div className="text-center">
