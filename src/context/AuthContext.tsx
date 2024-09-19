@@ -124,11 +124,11 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async () => {
     try {
-      await axios.post(
-        `${API_BASE_URL}/admin/logout`,
-        {},
-        { withCredentials: true }
-      );
+      // await axios.post(
+      //   `${API_BASE_URL}/admin/logout`,
+      //   {},
+      //   { withCredentials: true }
+      // );
       setLoggedUser(null);
       localStorage.removeItem("ffa-admin");
       window.location.href = "/admin/login";
