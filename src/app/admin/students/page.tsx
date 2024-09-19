@@ -60,7 +60,9 @@ const StudentManagement: React.FC = () => {
 
   const handleAdmit = async (id: string) => {
     try {
-      await axios.put(`${API_BASE_URL}/students/${id}`);
+      await axios.put(`${API_BASE_URL}/students/${id}`, {
+        status: "accepted",
+      });
       await fetchStudents()
     } catch (error) {
       console.error("Error admitting student:", error);
