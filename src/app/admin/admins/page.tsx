@@ -9,6 +9,7 @@ import API_BASE_URL from "@/config/baseURL";
 
 interface TeamMember {
   _id: string;
+  name: string;
   email: string;
   isSuperAdmin: boolean;
 }
@@ -17,7 +18,11 @@ const MembersPage: React.FC = () => {
   const [admins, setAdmins] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    name: "",
+    id: "", // Add id for update functionality
+  });
 
   const fetchAdmins = async () => {
     try {
@@ -42,55 +47,83 @@ const MembersPage: React.FC = () => {
     loadAdmins();
   }, []);
 
+  const handleUpdate = async () => {
+    try {
+      const response = await axios.put(
+        `${API_BASE_URL}/admin/${formData.id}`,
+        {
+          email: formData.email,
+          name: formData.name,
+        }
+      );
+      toast.success("Admin updated successfully");
+      await fetchAdmins();
+      closeModal();
+    } catch (error) {
+      toast.error("Failed to update admin");
+      console.error(error);
+    }
+  };
+
   const addNew = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/admin/new`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
+      const response = await axios.post(`${API_BASE_URL}/admin/new`, {
+        ...formData, // Use formData directly
       });
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error("Failed to add new admin");
       }
 
-      return await response.json();
+      return await response.data;
     } catch (error) {
       console.error("Failed to add new admin", error);
       throw error;
     }
   };
-  const handleDelete  = async (id:string)=>{
-   try {
+
+  const handleDelete = async (id: string) => {
+    try {
       await axios.delete(`${API_BASE_URL}/admin/delete/${id}`);
-    toast.success('admin deleted succesfully')
-   await fetchAdmins()
-   } catch (error) {
-    toast.error('failed to delete admnin')
-   }
-  }
+      toast.success("Admin deleted successfully");
+      await fetchAdmins();
+    } catch (error) {
+      toast.error("Failed to delete admin");
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      await addNew();
-      await fetchAdmins();
-      closeModal();
-      toast.success("Admin added successfully");
-    } catch (error: any) {
-      toast.error(`Failed to add admin`);
-      console.error(error);
+    if (formData.id) {
+      await handleUpdate();
+    } else {
+      // Otherwise, add a new admin
+      try {
+        await addNew();
+        toast.success("Admin added successfully");
+      } catch (error: any) {
+        toast.error(`Failed to add admin`);
+        console.error(error);
+      }
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const closeModal = () => {
     setIsAddModalOpen(false);
+    setFormData({ email: "", name: "", id: "" }); 
+  };
+
+  const openUpdateModal = (admin: TeamMember) => {
+    setFormData({ email: admin.email, name: admin.name, id: admin._id });
+    setIsAddModalOpen(true);
   };
 
   return (
@@ -99,7 +132,10 @@ const MembersPage: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-semibold">Admins</h1>
           <button
-            onClick={() => setIsAddModalOpen(true)}
+            onClick={() => {
+              setFormData({ email: "", name: "", id: "" }); 
+              setIsAddModalOpen(true);
+            }}
             className="px-4 py-2 bg-blue-600 text-white rounded-md"
           >
             Add Admin
@@ -107,13 +143,25 @@ const MembersPage: React.FC = () => {
         </div>
 
         <Modal isOpen={isAddModalOpen} onClose={closeModal}>
-          <h2 className="text-xl font-bold mb-4">Add New Admin</h2>
+          <h2 className="text-xl font-bold mb-4">
+            {formData.id ? "Update Admin" : "Add New Admin"}
+          </h2>
           <form onSubmit={handleSubmit}>
             <input
               type="email"
               name="email"
+              value={formData.email}
               onChange={handleChange}
               placeholder="Email"
+              className="w-full mb-4 p-2 border rounded-md"
+              required
+            />
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Full Name"
               className="w-full mb-4 p-2 border rounded-md"
               required
             />
@@ -121,7 +169,7 @@ const MembersPage: React.FC = () => {
               type="submit"
               className="w-full py-2 bg-blue-600 text-white rounded-md"
             >
-              Add Member
+              {formData.id ? "Update Member" : "Add Member"}
             </button>
           </form>
         </Modal>
@@ -132,15 +180,26 @@ const MembersPage: React.FC = () => {
               key={admin._id}
               className="m-3 flex p-2 justify-between border-b-2"
             >
-              <h1 className="font-bold">
-                {admin.email} {admin.isSuperAdmin ? "(Super Admin)" : ""}
-              </h1>
-              <button
-
-               onClick={()=>handleDelete(admin._id)}
-               className="md:bg-red-500 p-2 rounded-md md:text-white text-red-500 font-bold">
-                delete
-              </button>
+              <div className="">
+                <h1 className="font-bold">
+                  {admin.email} {admin.isSuperAdmin ? "(Super Admin)" : ""}
+                </h1>
+                <h1 className=" text-gray-500">{admin.name?.toLocaleUpperCase()}</h1>
+              </div>
+              <div className="flex flex-row-reverse gap-2">
+                <button
+                  onClick={() => handleDelete(admin._id)}
+                  className="md:bg-red-500 p-2 rounded-md md:text-white text-red-500 font-bold"
+                >
+                  Delete
+                </button>
+                <button
+                  onClick={() => openUpdateModal(admin)}
+                  className="md:bg-blue-500 p-2 rounded-md md:text-white text-blue-500 font-bold"
+                >
+                  Update
+                </button>
+              </div>
             </div>
           ))}
         </div>
