@@ -22,7 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl  px-4 sm:px-6 lg:px-4">
           <div className="flex justify-between items-center h-16">
             <div className="flex">
               <Link href="/admin" className="flex-shrink-0 flex items-center">
@@ -62,12 +62,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </div>
               </button>
             </div>
-            <button
-              onClick={handleLogout}
-              className="text-red-600 hover:text-red-400 p-0"
-            >
-              Logout
-            </button>
+            <div className="flex gap-5">
+  
+              <button
+                onClick={handleLogout}
+                className="md:bg-red-600 md:text-white rounded md:p-2 z-50 font-extrabold  hover:bg-red-800 text-red-600  "
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
       </nav>

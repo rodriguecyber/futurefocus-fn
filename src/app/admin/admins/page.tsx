@@ -6,8 +6,10 @@ import { toast } from "react-toastify";
 import withAdminAuth from "@/components/withAdminAuth";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
+import { fetchUser } from "@/context/adminAuth";
+import { useAuth } from "@/context/AuthContext"; // Import useAuth
 
-interface TeamMember {
+interface AdminType {
   _id: string;
   name: string;
   email: string;
@@ -15,13 +17,15 @@ interface TeamMember {
 }
 
 const MembersPage: React.FC = () => {
-  const [admins, setAdmins] = useState<TeamMember[]>([]);
+  const { logout } = useAuth(); // Get the logout function
+  const [admins, setAdmins] = useState<AdminType[]>([]);
+  const [logedUser, setLogeduser] = useState<AdminType>();
   const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
     name: "",
-    id: "", // Add id for update functionality
+    id: "",
   });
 
   const fetchAdmins = async () => {
@@ -37,25 +41,25 @@ const MembersPage: React.FC = () => {
     const loadAdmins = async () => {
       setIsLoading(true);
       try {
+        const User = await fetchUser();
+        setLogeduser(User); // Set logged user
         await fetchAdmins();
       } catch (error) {
-        toast.error("Failed to fetch team data");
+        toast.error("Failed to fetch logged user, logging out...");
+        logout(); // Call logout on error
       } finally {
         setIsLoading(false);
       }
     };
     loadAdmins();
-  }, []);
+  }, [logout]); // Add logout as a dependency
 
   const handleUpdate = async () => {
     try {
-      const response = await axios.put(
-        `${API_BASE_URL}/admin/${formData.id}`,
-        {
-          email: formData.email,
-          name: formData.name,
-        }
-      );
+      await axios.put(`${API_BASE_URL}/admin/${formData.id}`, {
+        email: formData.email,
+        name: formData.name,
+      });
       toast.success("Admin updated successfully");
       await fetchAdmins();
       closeModal();
@@ -68,14 +72,15 @@ const MembersPage: React.FC = () => {
   const addNew = async () => {
     try {
       const response = await axios.post(`${API_BASE_URL}/admin/new`, {
-        ...formData, // Use formData directly
+        ...formData,
       });
 
       if (!response) {
         throw new Error("Failed to add new admin");
       }
 
-      return await response.data;
+      await response.data;
+      toast.success("Admin added successfully");
     } catch (error) {
       console.error("Failed to add new admin", error);
       throw error;
@@ -97,14 +102,7 @@ const MembersPage: React.FC = () => {
     if (formData.id) {
       await handleUpdate();
     } else {
-      // Otherwise, add a new admin
-      try {
-        await addNew();
-        toast.success("Admin added successfully");
-      } catch (error: any) {
-        toast.error(`Failed to add admin`);
-        console.error(error);
-      }
+      await addNew();
     }
   };
 
@@ -118,10 +116,10 @@ const MembersPage: React.FC = () => {
 
   const closeModal = () => {
     setIsAddModalOpen(false);
-    setFormData({ email: "", name: "", id: "" }); 
+    setFormData({ email: "", name: "", id: "" });
   };
 
-  const openUpdateModal = (admin: TeamMember) => {
+  const openUpdateModal = (admin: AdminType) => {
     setFormData({ email: admin.email, name: admin.name, id: admin._id });
     setIsAddModalOpen(true);
   };
@@ -133,9 +131,10 @@ const MembersPage: React.FC = () => {
           <h1 className="text-2xl font-semibold">Admins</h1>
           <button
             onClick={() => {
-              setFormData({ email: "", name: "", id: "" }); 
+              setFormData({ email: "", name: "", id: "" });
               setIsAddModalOpen(true);
             }}
+            disabled={!logedUser?.isSuperAdmin}
             className="px-4 py-2 bg-blue-600 text-white rounded-md"
           >
             Add Admin
@@ -174,28 +173,32 @@ const MembersPage: React.FC = () => {
           </form>
         </Modal>
 
-        <div className="">
+        <div>
           {admins.map((admin) => (
             <div
               key={admin._id}
-              className="m-3 flex p-2 justify-between border-b-2"
+              className="m-3 flex flex-col md:flex-row p-2 justify-between border-b-2"
             >
-              <div className="">
+              <div>
                 <h1 className="font-bold">
                   {admin.email} {admin.isSuperAdmin ? "(Super Admin)" : ""}
                 </h1>
-                <h1 className=" text-gray-500">{admin.name?.toLocaleUpperCase()}</h1>
+                <h1 className="text-gray-500">
+                  {admin.name?.toLocaleUpperCase()}
+                </h1>
               </div>
               <div className="flex flex-row-reverse gap-2">
                 <button
                   onClick={() => handleDelete(admin._id)}
-                  className="md:bg-red-500 p-2 rounded-md md:text-white text-red-500 font-bold"
+                  className="bg-red-500 p-2 rounded-md text-white font-bold"
+                  disabled={!logedUser?.isSuperAdmin}
                 >
                   Delete
                 </button>
                 <button
                   onClick={() => openUpdateModal(admin)}
-                  className="md:bg-blue-500 p-2 rounded-md md:text-white text-blue-500 font-bold"
+                  className="bg-blue-500 p-2 rounded-md text-white font-bold"
+                  disabled={!logedUser?.isSuperAdmin}
                 >
                   Update
                 </button>
@@ -220,7 +223,7 @@ const Modal: React.FC<{
       onClick={onClose}
     >
       <div
-        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+        className="relative top-20 mx-auto p-5 border w-11/12 sm:w-96 shadow-lg rounded-md bg-white"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
