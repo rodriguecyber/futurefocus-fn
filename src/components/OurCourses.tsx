@@ -44,7 +44,7 @@ useEffect(() => {
                 className="w-full h-full object-cover"
               />
             </div>
-            <div className="flex flex-col p-4 bg-cyan-800 text-white">
+            <div className="flex flex-col p-4 bg-[#297B66] text-white">
               <span className="flex mb-2 mx-auto">
                 <FaStar />
                 <FaStar />
@@ -52,17 +52,19 @@ useEffect(() => {
                 <FaStar />
                 <FaStar />
               </span>
-              <h1 className="text-lg font-semibold mb-2 mx-auto">{course.title}</h1>
+              <h1 className="text-lg font-semibold mb-2 mx-auto">
+                {course.title}
+              </h1>
               <div className="flex flex-row mx-auto gap-2">
                 <a
                   href="##"
-                  className="px-5 py-2 bg-cyan-700 text-center rounded-lg hover:bg-cyan-600"
+                  className="px-5 py-2 bg-white text-center text-[#297B66] rounded-lg hover:bg-[#c6bebe]"
                 >
                   View More
                 </a>
                 <a
                   href="/application"
-                  className="px-5 py-2 bg-cyan-700 text-center rounded-lg hover:bg-cyan-600"
+                  className="px-5 py-2 bg-white  text-center text-[#297B66]  rounded-lg hover:bg-[#c6bebe]"
                 >
                   APPLY NOW
                 </a>

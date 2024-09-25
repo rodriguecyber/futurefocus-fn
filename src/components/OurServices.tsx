@@ -48,7 +48,7 @@ const renderIcon = (iconName: string) => {
         {services.map((service) => (
           <div key={service._id} className="bg-[#297B66] p-5 rounded  ">
            < div className="mx-auto  h-50 ">  {renderIcon(service.icon)}</div> 
-            <h3 className="text-xl text-center py-5 text-cyan-500">
+            <h3 className="text-xl text-center py-5 text-black font-bold">
               {service.title}
             </h3>
             <div className=" flex flex-col gap-2">
