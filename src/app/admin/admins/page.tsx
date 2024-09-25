@@ -13,7 +13,7 @@ interface AdminType {
   _id: string;
   name: string;
   email: string;
-  isSuperAdmin: boolean;
+  role:{role:string}
 }
 
 const MembersPage: React.FC = () => {
@@ -31,7 +31,7 @@ const MembersPage: React.FC = () => {
   const fetchAdmins = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/admin/admins`);
-      setAdmins(response.data.admins);
+      setAdmins(response.data);
     } catch (error) {
       console.error("Failed to fetch admins", error);
     }
@@ -42,17 +42,17 @@ const MembersPage: React.FC = () => {
       setIsLoading(true);
       try {
         const User = await fetchUser();
-        setLogeduser(User); // Set logged user
+        setLogeduser(User); 
         await fetchAdmins();
       } catch (error) {
         toast.error("Failed to fetch logged user, logging out...");
-        logout(); // Call logout on error
+        logout(); 
       } finally {
         setIsLoading(false);
       }
     };
     loadAdmins();
-  }, [logout]); // Add logout as a dependency
+  }, [logout]); 
 
   const handleUpdate = async () => {
     try {
@@ -134,7 +134,6 @@ const MembersPage: React.FC = () => {
               setFormData({ email: "", name: "", id: "" });
               setIsAddModalOpen(true);
             }}
-            disabled={!logedUser?.isSuperAdmin}
             className="px-4 py-2 bg-blue-600 text-white rounded-md"
           >
             Add Admin
@@ -181,24 +180,24 @@ const MembersPage: React.FC = () => {
             >
               <div>
                 <h1 className="font-bold">
-                  {admin.email} {admin.isSuperAdmin ? "(Super Admin)" : ""}
+                  {admin.email} 
                 </h1>
                 <h1 className="text-gray-500">
-                  {admin.name?.toLocaleUpperCase()}
+                  {admin.name?.toLocaleUpperCase() +` (${admin.role?.role})`}
                 </h1>
               </div>
               <div className="flex flex-row-reverse gap-2">
                 <button
                   onClick={() => handleDelete(admin._id)}
                   className="bg-red-500 p-2 rounded-md text-white font-bold"
-                  disabled={!logedUser?.isSuperAdmin}
+                 
                 >
                   Delete
                 </button>
                 <button
                   onClick={() => openUpdateModal(admin)}
                   className="bg-blue-500 p-2 rounded-md text-white font-bold"
-                  disabled={!logedUser?.isSuperAdmin}
+                
                 >
                   Update
                 </button>

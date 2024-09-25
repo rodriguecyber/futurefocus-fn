@@ -1,0 +1,136 @@
+{
+    "_id": "66e17070086a5f768785faa9",
+    "email": "rodrirwigara@gmail.com",
+    "isSuperAdmin": true,
+    "password": "$2b$10$gT3lZyhQg1UfybW4jjgzce/lqtKEBz9lded3LjYJMxdQX07YZihyq",
+    "name": "RWIGARA RODRIGUE",
+    "role": {
+        "_id": "66f3cbc85104dee379088736",
+        "role": "Admin",
+        "permission": [
+            {
+                "_id": "66f3c2d0825c4e1eec6797c4",
+                "feature": {
+                    "_id": "66f3c0523b50d0a89e20bf19",
+                    "feature": "media",
+                    "web": "website",
+                    "createdAt": "2024-09-25T07:48:34.255Z",
+                    "updatedAt": "2024-09-25T07:48:34.255Z",
+                    "__v": 0
+                },
+                "permission": "create",
+                "createdAt": "2024-09-25T07:59:12.886Z",
+                "updatedAt": "2024-09-25T07:59:12.886Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c3e7a97f527588f88f43",
+                "feature": {
+                    "_id": "66f3c0523b50d0a89e20bf19",
+                    "feature": "media",
+                    "web": "website",
+                    "createdAt": "2024-09-25T07:48:34.255Z",
+                    "updatedAt": "2024-09-25T07:48:34.255Z",
+                    "__v": 0
+                },
+                "permission": "delete",
+                "createdAt": "2024-09-25T08:03:51.277Z",
+                "updatedAt": "2024-09-25T08:03:51.277Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c3ffa97f527588f88f46",
+                "feature": {
+                    "_id": "66f3c0523b50d0a89e20bf19",
+                    "feature": "media",
+                    "web": "website",
+                    "createdAt": "2024-09-25T07:48:34.255Z",
+                    "updatedAt": "2024-09-25T07:48:34.255Z",
+                    "__v": 0
+                },
+                "permission": "update",
+                "createdAt": "2024-09-25T08:04:15.115Z",
+                "updatedAt": "2024-09-25T08:04:15.115Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c408a97f527588f88f49",
+                "feature": {
+                    "_id": "66f3c0523b50d0a89e20bf19",
+                    "feature": "media",
+                    "web": "website",
+                    "createdAt": "2024-09-25T07:48:34.255Z",
+                    "updatedAt": "2024-09-25T07:48:34.255Z",
+                    "__v": 0
+                },
+                "permission": "view",
+                "createdAt": "2024-09-25T08:04:24.264Z",
+                "updatedAt": "2024-09-25T08:04:24.264Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c8235104dee37908870f",
+                "feature": {
+                    "_id": "66f3c8155104dee37908870c",
+                    "feature": "roles",
+                    "web": "website",
+                    "createdAt": "2024-09-25T08:21:41.105Z",
+                    "updatedAt": "2024-09-25T08:21:41.105Z",
+                    "__v": 0
+                },
+                "permission": "add",
+                "createdAt": "2024-09-25T08:21:55.474Z",
+                "updatedAt": "2024-09-25T08:21:55.474Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c8415104dee379088713",
+                "feature": {
+                    "_id": "66f3c8155104dee37908870c",
+                    "feature": "roles",
+                    "web": "website",
+                    "createdAt": "2024-09-25T08:21:41.105Z",
+                    "updatedAt": "2024-09-25T08:21:41.105Z",
+                    "__v": 0
+                },
+                "permission": "remove",
+                "createdAt": "2024-09-25T08:22:25.241Z",
+                "updatedAt": "2024-09-25T08:22:25.241Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c8485104dee379088717",
+                "feature": {
+                    "_id": "66f3c8155104dee37908870c",
+                    "feature": "roles",
+                    "web": "website",
+                    "createdAt": "2024-09-25T08:21:41.105Z",
+                    "updatedAt": "2024-09-25T08:21:41.105Z",
+                    "__v": 0
+                },
+                "permission": "view",
+                "createdAt": "2024-09-25T08:22:32.925Z",
+                "updatedAt": "2024-09-25T08:22:32.925Z",
+                "__v": 0
+            },
+            {
+                "_id": "66f3c8665104dee37908871b",
+                "feature": {
+                    "_id": "66f3c8155104dee37908870c",
+                    "feature": "roles",
+                    "web": "website",
+                    "createdAt": "2024-09-25T08:21:41.105Z",
+                    "updatedAt": "2024-09-25T08:21:41.105Z",
+                    "__v": 0
+                },
+                "permission": "permit",
+                "createdAt": "2024-09-25T08:23:02.309Z",
+                "updatedAt": "2024-09-25T08:23:02.309Z",
+                "__v": 0
+            }
+        ],
+        "createdAt": "2024-09-25T08:37:28.048Z",
+        "updatedAt": "2024-09-25T09:46:22.777Z",
+        "__v": 1
+    }
+}

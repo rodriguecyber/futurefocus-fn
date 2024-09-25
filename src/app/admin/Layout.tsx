@@ -1,4 +1,4 @@
-"use client";
+'use client'
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -43,6 +43,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </Link>
                 <Link href="/admin/intakes" className="nav-link">
                   Intakes
+                </Link>
+                <Link href="/admin/manage-role" className="nav-link">
+                  Roles
                 </Link>
                 <Link
                   href="https://student.futurefocus.co.rw/"

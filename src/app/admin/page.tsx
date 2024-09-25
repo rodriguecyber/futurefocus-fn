@@ -33,6 +33,17 @@ const MediaPostForm: React.FC = () => {
     fetchMediaItems();
   }, []);
 
+  useEffect(() => {
+    if (editingItemId) {
+      const itemToEdit = mediaItems.find((item) => item._id === editingItemId);
+      if (itemToEdit) {
+        setFormData(itemToEdit);
+      }
+    } else {
+      resetForm();
+    }
+  }, [editingItemId, mediaItems]);
+
   const fetchMediaItems = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/media`);
@@ -73,6 +84,7 @@ const MediaPostForm: React.FC = () => {
     data.append("type", formData.type);
     data.append("content", formData.content);
 
+  
     if (formData.type === "video" && formData.videoUrl) {
       data.append("videoUrl", formData.videoUrl);
     }
@@ -80,10 +92,6 @@ const MediaPostForm: React.FC = () => {
     const fileInput = fileInputRef.current;
     if (fileInput?.files?.[0]) {
       data.append("file", fileInput.files[0]);
-    } else if (formData.type === "image") {
-      setIsSubmitting(false);
-      toast.error("Select an image");
-      return;
     }
 
     try {
@@ -123,8 +131,7 @@ const MediaPostForm: React.FC = () => {
   };
 
   const handleEdit = (item: MediaItem) => {
-    setFormData(item);
-    
+    setEditingItemId(item._id);
   };
 
   const handleDelete = async (id: string) => {
@@ -181,7 +188,7 @@ const MediaPostForm: React.FC = () => {
             </label>
             <input
               type="file"
-              accept="image/*"
+              accept={formData.type === "image" ? "image/*" : "video/*"}
               onChange={handleFileChange}
               className="mt-1 block w-full"
               disabled={isSubmitting}
