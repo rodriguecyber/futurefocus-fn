@@ -66,7 +66,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </button>
             </div>
             <div className="flex gap-5">
-  
               <button
                 onClick={handleLogout}
                 className="md:bg-red-600 md:text-white rounded md:p-2 z-50 font-extrabold  hover:bg-red-800 text-red-600  "
@@ -95,6 +94,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </Link>
             <Link href="/admin/intakes" className="nav-link">
               Intakes
+            </Link>
+            <Link href="/admin/manage-role" className="nav-link">
+              Roles
             </Link>
             <Link
               href="https://student.futurefocus.co.rw/"
