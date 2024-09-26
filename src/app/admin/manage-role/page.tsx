@@ -254,7 +254,7 @@ const ManageRolesPermissions: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">Add Role</h2>
           <div className="flex mb-4">
             <input
-              disabled={!hasPermission(userData as IUser, "roles", "create")}
+              disabled={!hasPermission(userData as IUser, "roles", "add")}
               type="text"
               className="border rounded px-3 py-2 flex-grow mr-2"
               value={newRole.role}
@@ -262,10 +262,10 @@ const ManageRolesPermissions: React.FC = () => {
               placeholder="Role"
             />
             <button
-              disabled={!hasPermission(userData as IUser, "roles", "create")}
+              disabled={!hasPermission(userData as IUser, "roles", "add")}
               onClick={handleAddRole}
               className={`${
-                !hasPermission(userData as IUser, "roles", "create")
+                !hasPermission(userData as IUser, "roles", "add")
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-500"
               } text-white rounded px-4 ml-2`}
