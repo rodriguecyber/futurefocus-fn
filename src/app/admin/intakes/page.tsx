@@ -4,6 +4,9 @@ import Layout from "../Layout";
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { IUser } from "@/types";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { hasPermission } from "@/config/hasPermission";
 
 const Shift = () => {
   const [intake, setIntake] = useState("");
@@ -11,6 +14,7 @@ const Shift = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [userData , setUserData] = useState<IUser>()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -40,6 +44,8 @@ const Shift = () => {
       setIsLoading(true);
       const response = await axios.get(`${API_BASE_URL}/admin/intake`);
       setIntakes(response.data.intakes);
+      await fetchUser()
+      setUserData(await getLoggedUserData())
     } catch (error) {
       console.log(error);
     } finally {
@@ -74,7 +80,12 @@ const Shift = () => {
           <div className="flex gap-3 justify-center">
             <input type="month" name="" id="" onChange={handleChange} />
             <button
-              className="bg-blue-700 rounded p-2 hover:bg-blue-500 text-white"
+              disabled={!hasPermission(userData as IUser, "intake", "create")}
+              className={`${
+                !hasPermission(userData as IUser, "intake", "create")
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-700  hover:bg-blue-500"
+              } text-white rounded p-2`}
               onClick={handleSubmit}
             >
               {isSubmitting ? "Submitting..." : "Add New INTAKE"}
@@ -92,8 +103,11 @@ const Shift = () => {
                   >
                     <h5>{intake.intake}</h5>
                     <button
+                      disabled={
+                        !hasPermission(userData as IUser, "intake", "delete")
+                      }
                       onClick={() => handleDelete(intake._id)}
-                      className="lg:bg-red-600 text-red-600 lg:text-white p-1 rounded"
+                      className={`${!hasPermission(userData as IUser, "intake", "create")?'bg-gray-400 cursor-not-allowed':'lg:bg-red-600 text-red-600'} lg:text-white p-1 rounded`}
                     >
                       {deletingId === intake._id ? "Deleting..." : "Delete"}
                     </button>

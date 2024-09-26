@@ -11,6 +11,9 @@ import {
 } from "../../../context/courseContext";
 import withAdminAuth from "@/components/withAdminAuth";
 import Layout from "../Layout";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { IUser } from "@/types";
+import { hasPermission } from "@/config/hasPermission";
 
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -18,6 +21,8 @@ const CoursesComponent: React.FC = () => {
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
+  const [userData, setUserData] = useState<IUser | null>(null);
+
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -29,6 +34,8 @@ const CoursesComponent: React.FC = () => {
           console.error("Unexpected data format:", response.data);
           setCourses([]);
         }
+        await fetchUser()
+        setUserData(await getLoggedUserData())
       } catch (error) {
         console.error("Error fetching courses", error);
         setCourses([]);
@@ -116,8 +123,13 @@ const CoursesComponent: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-semibold text-gray-900">Courses</h1>
           <button
+            disabled={!hasPermission(userData as IUser, "courses", "create")}
             onClick={() => setIsAddModalOpen(true)}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+            className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
+              !hasPermission(userData as IUser, "courses", "create")
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
           >
             Add New Course
           </button>
@@ -151,14 +163,22 @@ const CoursesComponent: React.FC = () => {
                   </div>
                   <div className="mt-4 flex justify-between">
                     <button
+                      disabled={
+                        !hasPermission(userData as IUser, "courses", "create")
+                      }
                       onClick={() => handleEdit(course)}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                      className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
+                        !hasPermission(userData as IUser, "courses", "update")
+                          ? "bg-gray-400 cursor-not-allowed text-white"
+                          : "bg-indigo-100  text-indigo-700 hover:bg-indigo-200"
+                      } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
                     >
                       Update
                     </button>
                     <button
+                    disabled={!hasPermission(userData as IUser, "courses", "delete")}
                       onClick={() => handleDelete(course._id)}
-                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${ !hasPermission(userData as IUser, "courses", "delete")?'bg-gray-400 text-white cursor-not-allowed': 'text-red-700 bg-red-100 hover:bg-red-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
                     >
                       Delete
                     </button>

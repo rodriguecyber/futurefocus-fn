@@ -5,6 +5,8 @@ import { IFeature, IPermission, IRole, IUser } from "@/types";
 import withAdminAuth from "@/components/withAdminAuth";
 import API_BASE_URL from "@/config/baseURL";
 import Layout from "../Layout";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { hasPermission } from "@/config/hasPermission";
 
 const ManageRolesPermissions: React.FC = () => {
   const [features, setFeatures] = useState<IFeature[]>([]);
@@ -21,6 +23,7 @@ const ManageRolesPermissions: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<string>("");
   const [selectedPermissions, setSelectedPermissions] = useState<string[]>([]);
   const [rolePermissions, setRolePermissions] = useState<string[]>([]);
+  const [userData , setUserData] =  useState<IUser>()
 
   useEffect(() => {
     fetchFeatures();
@@ -45,6 +48,8 @@ const ManageRolesPermissions: React.FC = () => {
   const fetchFeatures = async () => {
     const res = await axios.get<IFeature[]>(`${API_BASE_URL}/role/feature`);
     setFeatures(res.data);
+    await fetchUser()
+    setUserData(await getLoggedUserData())
   };
 
   const fetchPermissions = async () => {
@@ -249,6 +254,7 @@ const ManageRolesPermissions: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">Add Role</h2>
           <div className="flex mb-4">
             <input
+              disabled={!hasPermission(userData as IUser, "role", "create")}
               type="text"
               className="border rounded px-3 py-2 flex-grow mr-2"
               value={newRole.role}
@@ -256,8 +262,13 @@ const ManageRolesPermissions: React.FC = () => {
               placeholder="Role"
             />
             <button
+              disabled={!hasPermission(userData as IUser, "role", "create")}
               onClick={handleAddRole}
-              className="bg-blue-500 text-white rounded px-4 ml-2"
+              className={`${
+                !hasPermission(userData as IUser, "role", "create")
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500"
+              } text-white rounded px-4 ml-2`}
             >
               Add Role
             </button>
@@ -276,8 +287,15 @@ const ManageRolesPermissions: React.FC = () => {
                   <td className="px-4 py-2">{role.role}</td>
                   <td className="px-4 py-2 text-right">
                     <button
+                      disabled={
+                        !hasPermission(userData as IUser, "role", "delete")
+                      }
                       onClick={() => handleDeleteRole(role._id)}
-                      className="text-red-500"
+                      className={`${
+                        !hasPermission(userData as IUser, "role", "delete")
+                          ? "text-gray-400 cursor-not-allowed"
+                          : "text-red-500"
+                      }`}
                     >
                       Delete
                     </button>
@@ -294,6 +312,7 @@ const ManageRolesPermissions: React.FC = () => {
             Assign Permissions to Role
           </h2>
           <select
+            // disabled={!hasPermission(userData as IUser, "role", "permit")}
             className="border rounded px-3 py-2 flex-grow mb-4"
             value={selectedRole}
             onChange={(e) => {
@@ -313,6 +332,7 @@ const ManageRolesPermissions: React.FC = () => {
             {permissions.map((permission) => (
               <label key={permission._id} className="mr-4">
                 <input
+                  disabled={!hasPermission(userData as IUser, "role", "permit")}
                   type="checkbox"
                   value={permission._id}
                   checked={selectedPermissions.includes(permission._id)} // Check if the permission is included
@@ -330,17 +350,18 @@ const ManageRolesPermissions: React.FC = () => {
             ))}
           </div>
           <button
+            disabled={!hasPermission(userData as IUser, "role", "permit")}
             onClick={handleAssignPermissionsToRole}
-            className="bg-blue-500 text-white rounded px-4"
+            className={`${!hasPermission(userData as IUser, "role", "permit")?'bg-gray-400 cursor-not-allowed':'bg-blue-500'} text-white rounded px-4`}
           >
             Assign Permissions
           </button>
         </div>
 
-        {/* Assign Role to User */}
         <div className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">Assign Role to User</h2>
           <select
+            disabled={!hasPermission(userData as IUser, "role", "assign")}
             className="border rounded px-3 py-2 flex-grow mb-4"
             value={selectedUser}
             onChange={(e) => setSelectedUser(e.target.value)}
@@ -353,6 +374,7 @@ const ManageRolesPermissions: React.FC = () => {
             ))}
           </select>
           <select
+            disabled={!hasPermission(userData as IUser, "role", "assign")}
             className="border rounded px-3 py-2 flex-grow mb-4"
             value={selectedRole}
             onChange={(e) => setSelectedRole(e.target.value)}
@@ -365,8 +387,13 @@ const ManageRolesPermissions: React.FC = () => {
             ))}
           </select>
           <button
+            disabled={!hasPermission(userData as IUser, "role", "assign")}
             onClick={handleAssignRoleToUser}
-            className="bg-blue-500 text-white rounded px-4"
+            className={`${
+              !hasPermission(userData as IUser, "role", "assign")
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500"
+            } text-white rounded px-4`}
           >
             Assign Role
           </button>

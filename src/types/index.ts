@@ -5,13 +5,33 @@ export interface Member {
   role: string;
 }
 
-export interface IUser extends Document {
-  _id:string
-  email: string;
-  password: string;
-  isSuperAdmin: Boolean;
-  name: string;
+export interface Feature {
+  _id: string;
+  feature: string;
+  web: string;
+ 
 }
+
+export interface Permission {
+  _id: string;
+  feature: Feature;
+  permission: string;
+}
+
+export interface Role {
+  _id: string;
+  role: string;
+  permission: Permission[];
+
+}
+
+export interface IUser {
+  _id: string;
+  email: string;
+  name: string;
+  role: Role;
+}
+
 export interface Service {
   id: string;
   name: string;

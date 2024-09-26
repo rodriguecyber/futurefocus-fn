@@ -4,8 +4,11 @@ import axios from "axios";
 import Layout from "../Layout";
 import Modal from "@/components/Model";
 import * as FaIcons from "react-icons/fa"; // Import all icons
-import withAdminAuth from "@/components/withAdminAuth";;
+import withAdminAuth from "@/components/withAdminAuth";
 import API_BASE_URL from "@/config/baseURL";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { IUser } from "@/types";
+import { hasPermission } from "@/config/hasPermission";
 
 interface Service {
   _id: string;
@@ -14,8 +17,6 @@ interface Service {
   subservices: string[];
 }
 
-
-
 const ServicesPage: React.FC = () => {
   const [services, setServices] = useState<Service[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,6 +24,7 @@ const ServicesPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [iconName, setIconName] = useState<string>("FaStar"); // Default icon
+  const [userData, setUserData] = useState<IUser>();
 
   useEffect(() => {
     fetchServices();
@@ -33,6 +35,8 @@ const ServicesPage: React.FC = () => {
       const response = await axios.get(`${API_BASE_URL}/service`);
       setServices(response.data);
       setError(null); // Clear error if fetch is successful
+      await fetchUser();
+      setUserData(await getLoggedUserData());
     } catch (error) {
       console.error("Error fetching services", error);
       setError("Failed to fetch services. Please try again.");
@@ -113,8 +117,13 @@ const ServicesPage: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">Services</h1>
           <button
+            disabled={!hasPermission(userData as IUser, "services", "create")}
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 text-white px-4 py-2 rounded"
+            className={`${
+              !hasPermission(userData as IUser, "courses", "create")
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500"
+            } text-white px-4 py-2 rounded`}
           >
             Add New Service
           </button>
@@ -153,14 +162,28 @@ const ServicesPage: React.FC = () => {
                 </ul>
                 <div className="mt-4 flex justify-between">
                   <button
+                    disabled={
+                      !hasPermission(userData as IUser, "courses", "update")
+                    }
                     onClick={() => handleEdit(service)}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                    className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
+                      !hasPermission(userData as IUser, "courses", "update")
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "text-indigo-700 bg-indigo-100 hover:bg-indigo-200"
+                    }`}
                   >
                     Update
                   </button>
                   <button
+                    disabled={
+                      !hasPermission(userData as IUser, "courses", "delete")
+                    }
                     onClick={() => handleDelete(service._id)}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200"
+                    className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
+                      !hasPermission(userData as IUser, "courses", "delete")
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "text-red-700 bg-red-100 hover:bg-red-200"
+                    }`}
                   >
                     Delete
                   </button>

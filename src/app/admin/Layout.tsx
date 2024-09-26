@@ -24,36 +24,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl  px-4 sm:px-6 lg:px-4">
           <div className="flex justify-between items-center h-16">
-            <div className="flex">
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link href="/admin" className="flex-shrink-0 flex items-center">
-                Admin Panel
+                Media
               </Link>
-              <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                <Link href="/admin/members" className="nav-link">
-                  Members
-                </Link>
-                <Link href="/admin/services" className="nav-link">
-                  Services
-                </Link>
-                <Link href="/admin/courses" className="nav-link">
-                  Courses
-                </Link>
-                <Link href="/admin/admins" className="nav-link">
-                  Admins
-                </Link>
-                <Link href="/admin/intakes" className="nav-link">
-                  Intakes
-                </Link>
-                <Link href="/admin/manage-role" className="nav-link">
-                  Roles
-                </Link>
-                <Link
-                  href="https://student.futurefocus.co.rw/"
-                  className="text-green-700"
-                >
-                  Academic Portal
-                </Link>
-              </div>
+              <Link href="/admin/members" className="nav-link">
+                Team
+              </Link>
+              <Link href="/admin/services" className="nav-link">
+                Services
+              </Link>
+              <Link href="/admin/courses" className="nav-link">
+                Courses
+              </Link>
+              <Link href="/admin/admins" className="nav-link">
+                Admins
+              </Link>
+              <Link href="/admin/intakes" className="nav-link">
+                Intakes
+              </Link>
+              <Link href="/admin/manage-role" className="nav-link">
+                Roles
+              </Link>
+              <Link
+                href="https://student.futurefocus.co.rw/"
+                className="text-green-700"
+              >
+                Academic Portal
+              </Link>
             </div>
             <div className="flex items-center sm:hidden">
               <button onClick={toggleMobileMenu} aria-label="Toggle menu">

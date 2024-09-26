@@ -6,8 +6,10 @@ import { toast } from "react-toastify";
 import withAdminAuth from "@/components/withAdminAuth";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
-import { fetchUser } from "@/context/adminAuth";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
 import { useAuth } from "@/context/AuthContext"; // Import useAuth
+import { IUser } from "@/types";
+import { hasPermission } from "@/config/hasPermission";
 
 interface AdminType {
   _id: string;
@@ -21,6 +23,7 @@ const MembersPage: React.FC = () => {
   const [admins, setAdmins] = useState<AdminType[]>([]);
   const [logedUser, setLogeduser] = useState<AdminType>();
   const [isLoading, setIsLoading] = useState(true);
+  const [userData , setUserData] = useState<IUser>()
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -44,6 +47,8 @@ const MembersPage: React.FC = () => {
         const User = await fetchUser();
         setLogeduser(User); 
         await fetchAdmins();
+        await fetchUser()
+        setLogeduser(await getLoggedUserData())
       } catch (error) {
         toast.error("Failed to fetch logged user, logging out...");
         logout(); 
@@ -130,11 +135,16 @@ const MembersPage: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-semibold">Admins</h1>
           <button
+            disabled={!hasPermission(userData as IUser, "admins", "create")}
             onClick={() => {
               setFormData({ email: "", name: "", id: "" });
               setIsAddModalOpen(true);
             }}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
+            className={`px-4 py-2 ${
+              !hasPermission(userData as IUser, "admins", "create")
+                ? "bg-gray-400 cursor-not-allowed "
+                : "bg-blue-600"
+            } text-white rounded-md`}
           >
             Add Admin
           </button>
@@ -179,25 +189,27 @@ const MembersPage: React.FC = () => {
               className="m-3 flex flex-col md:flex-row p-2 justify-between border-b-2"
             >
               <div>
-                <h1 className="font-bold">
-                  {admin.email} 
-                </h1>
+                <h1 className="font-bold">{admin.email}</h1>
                 <h1 className="text-gray-500">
-                  {admin.name?.toLocaleUpperCase() +` (${admin.role?.role})`}
+                  {admin.name?.toLocaleUpperCase() + ` (${admin.role?.role})`}
                 </h1>
               </div>
               <div className="flex flex-row-reverse gap-2">
                 <button
+                  disabled={
+                    !hasPermission(userData as IUser, "admins", "delete")
+                  }
                   onClick={() => handleDelete(admin._id)}
-                  className="bg-red-500 p-2 rounded-md text-white font-bold"
-                 
+                  className={`${!hasPermission(userData as IUser, "admins", 'delete')?'bg-gray-400 cursor-not-allowed':'bg-red-500'} p-2 rounded-md text-white font-bold`}
                 >
                   Delete
                 </button>
                 <button
+                  disabled={
+                    !hasPermission(userData as IUser, "admins", "update")
+                  }
                   onClick={() => openUpdateModal(admin)}
-                  className="bg-blue-500 p-2 rounded-md text-white font-bold"
-                
+                  className={`${!hasPermission(userData as IUser, "admins", 'delete')?'bg-gray-400 cursor-not-allowed':'bg-blue-500'} p-2 rounded-md text-white font-bold`}
                 >
                   Update
                 </button>

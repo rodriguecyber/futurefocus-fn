@@ -5,6 +5,9 @@ import Layout from "../Layout";
 import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import withAdminAuth from "@/components/withAdminAuth";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { IUser } from "@/types";
+import { hasPermission } from "@/config/hasPermission";
 
 interface TeamMember {
   _id: string;
@@ -24,6 +27,8 @@ const MembersPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
+
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
@@ -38,7 +43,9 @@ const MembersPage: React.FC = () => {
       setIsLoading(true); 
       try {
         const teamMembers = await fetchTeam();
-        setMembers(teamMembers);
+         fetchUser(),
+          setMembers(teamMembers);
+         setUserData(getLoggedUserData()); 
       } catch (error) {
         toast.error("Failed to fetch team data");
       } finally {
@@ -109,8 +116,13 @@ const MembersPage: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-semibold">Team Members</h1>
           <button
+            disabled={!hasPermission(userData as IUser, "team", "create")}
             onClick={() => setIsAddModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md"
+            className={`px-4 py-2 ${
+              !hasPermission(userData as IUser, "team", "create")
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-600"
+            } text-white rounded-md`}
           >
             Add Member
           </button>
@@ -137,14 +149,23 @@ const MembersPage: React.FC = () => {
                 </div>
                 <div className="flex mt-2 flex-col gap-2">
                   <button
+                    disabled={
+                      !hasPermission(userData as IUser, "team", "update")
+                    }
                     onClick={() => handleEdit(member)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-md"
+                    className={`px-4 py-2 ${!hasPermission(userData as IUser, "team", "create")
+                ? "bg-gray-400 cursor-not-allowed":'bg-green-600'} text-white rounded-md`}
                   >
                     Edit
                   </button>
                   <button
+                    disabled={
+                      !hasPermission(userData as IUser, "team", "create")
+                    }
                     onClick={() => handleDelete(member._id)}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md"
+                    className={`px-4 py-2 ${!hasPermission(userData as IUser, "team", "create")
+                ? "bg-gray-400 cursor-not-allowed":'bg-red-600'} text-white rounded-md`}
+                  
                   >
                     Delete
                   </button>

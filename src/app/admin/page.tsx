@@ -5,11 +5,14 @@ import withAdminAuth from "@/components/withAdminAuth";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
 import { toast } from "react-toastify";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { IUser } from "@/types";
+import { hasPermission } from "@/config/hasPermission";
 
 export interface MediaItem {
   _id: string;
   type: "image" | "video";
-  url: string; // Image URL or Video Thumbnail URL
+  url: string;
   content: string;
   videoUrl?: string;
 }
@@ -28,9 +31,22 @@ const MediaPostForm: React.FC = () => {
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [userData, setUserData] = useState<IUser | null>(null);
 
   useEffect(() => {
-    fetchMediaItems();
+    const fetchData = async () => {
+      try {
+        const [mediaResponse, user] = await Promise.all([
+          axios.get(`${API_BASE_URL}/media`),
+          fetchUser(),
+        ]);
+        setMediaItems(mediaResponse.data);
+        setUserData(getLoggedUserData()); 
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -43,15 +59,6 @@ const MediaPostForm: React.FC = () => {
       resetForm();
     }
   }, [editingItemId, mediaItems]);
-
-  const fetchMediaItems = async () => {
-    try {
-      const response = await axios.get(`${API_BASE_URL}/media`);
-      setMediaItems(response.data);
-    } catch (error) {
-      console.error("Error fetching media items:", error);
-    }
-  };
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -83,8 +90,6 @@ const MediaPostForm: React.FC = () => {
     const data = new FormData();
     data.append("type", formData.type);
     data.append("content", formData.content);
-
-  
     if (formData.type === "video" && formData.videoUrl) {
       data.append("videoUrl", formData.videoUrl);
     }
@@ -112,7 +117,8 @@ const MediaPostForm: React.FC = () => {
 
       if (response.status === 200 || response.status === 201) {
         console.log("File uploaded/updated successfully:", response.data);
-        fetchMediaItems();
+        //@ts-expect-error rr
+        setMediaItems();
         resetForm();
       } else {
         console.error("File upload/update failed:", response.data);
@@ -138,6 +144,7 @@ const MediaPostForm: React.FC = () => {
     try {
       setDeletingItemId(id);
       await axios.delete(`${API_BASE_URL}/media/${id}`);
+      //@ts-expect-error rr
       fetchMediaItems();
     } catch (error) {
       console.error("Error deleting media item:", error);
@@ -229,11 +236,15 @@ const MediaPostForm: React.FC = () => {
             <button
               type="submit"
               className={`inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
-                isSubmitting
+                isSubmitting ||
+                !hasPermission(userData as IUser, "media", "create")
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-indigo-600 hover:bg-indigo-700"
               } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
-              disabled={isSubmitting}
+              disabled={
+                isSubmitting ||
+                !hasPermission(userData as IUser, "media", "create")
+              }
             >
               {isSubmitting
                 ? "Submitting..."
@@ -287,9 +298,11 @@ const MediaPostForm: React.FC = () => {
               <div className="text-right space-x-2">
                 <button
                   onClick={() => handleEdit(item)}
-                  className="px-3 py-1 text-sm text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none"
+                  className={`px-3 py-1 text-sm text-white ${!hasPermission(userData as IUser,'media','create')?"bg-gray-400 cursor-not-allowed":"bg-blue-500 rounded-md hover:bg-blue-600"} focus:outline-none`}
                   disabled={
-                    editingItemId === item._id || deletingItemId === item._id
+                    editingItemId === item._id ||
+                    deletingItemId === item._id ||
+                    !hasPermission(userData as IUser, "media", "update")
                   }
                 >
                   {editingItemId === item._id ? "Editing..." : "Edit"}
@@ -299,9 +312,12 @@ const MediaPostForm: React.FC = () => {
                   className={`px-3 py-1 text-sm text-white ${
                     deletingItemId === item._id
                       ? "bg-red-400 cursor-not-allowed"
-                      : "bg-red-500 hover:bg-red-600"
+                      :  !hasPermission(userData as IUser,'media','create')?"bg-gray-400 cursor-not-allowed": "bg-red-500 hover:bg-red-600"
                   } rounded-md focus:outline-none`}
-                  disabled={deletingItemId === item._id}
+                  disabled={
+                    deletingItemId === item._id ||
+                    !hasPermission(userData as IUser, "media", "delete")
+                  }
                 >
                   {deletingItemId === item._id ? "Deleting..." : "Delete"}
                 </button>
