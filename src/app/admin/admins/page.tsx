@@ -48,7 +48,7 @@ const MembersPage: React.FC = () => {
         setLogeduser(User); 
         await fetchAdmins();
         await fetchUser()
-        setLogeduser(await getLoggedUserData())
+        setUserData(await getLoggedUserData())
       } catch (error) {
         toast.error("Failed to fetch logged user, logging out...");
         logout(); 
@@ -200,7 +200,11 @@ const MembersPage: React.FC = () => {
                     !hasPermission(userData as IUser, "admins", "delete")
                   }
                   onClick={() => handleDelete(admin._id)}
-                  className={`${!hasPermission(userData as IUser, "admins", 'delete')?'bg-gray-400 cursor-not-allowed':'bg-red-500'} p-2 rounded-md text-white font-bold`}
+                  className={`${
+                    !hasPermission(userData as IUser, "admins", "delete")
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500"
+                  } p-2 rounded-md text-white font-bold`}
                 >
                   Delete
                 </button>
@@ -209,7 +213,11 @@ const MembersPage: React.FC = () => {
                     !hasPermission(userData as IUser, "admins", "update")
                   }
                   onClick={() => openUpdateModal(admin)}
-                  className={`${!hasPermission(userData as IUser, "admins", 'delete')?'bg-gray-400 cursor-not-allowed':'bg-blue-500'} p-2 rounded-md text-white font-bold`}
+                  className={`${
+                    !hasPermission(userData as IUser, "admins", "delete")
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500"
+                  } p-2 rounded-md text-white font-bold`}
                 >
                   Update
                 </button>

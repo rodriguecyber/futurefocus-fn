@@ -8,5 +8,5 @@ export const  hasPermission = (user:IUser, featureName:string, permissionType:st
   );
 }
 
-// Example usage
+
 

@@ -298,7 +298,7 @@ const MediaPostForm: React.FC = () => {
               <div className="text-right space-x-2">
                 <button
                   onClick={() => handleEdit(item)}
-                  className={`px-3 py-1 text-sm text-white ${!hasPermission(userData as IUser,'media','create')?"bg-gray-400 cursor-not-allowed":"bg-blue-500 rounded-md hover:bg-blue-600"} focus:outline-none`}
+                  className={`px-3 py-1 text-sm text-white ${!hasPermission(userData as IUser,'media','update')?"bg-gray-400 cursor-not-allowed":"bg-blue-500 rounded-md hover:bg-blue-600"} focus:outline-none`}
                   disabled={
                     editingItemId === item._id ||
                     deletingItemId === item._id ||
@@ -312,7 +312,7 @@ const MediaPostForm: React.FC = () => {
                   className={`px-3 py-1 text-sm text-white ${
                     deletingItemId === item._id
                       ? "bg-red-400 cursor-not-allowed"
-                      :  !hasPermission(userData as IUser,'media','create')?"bg-gray-400 cursor-not-allowed": "bg-red-500 hover:bg-red-600"
+                      :  !hasPermission(userData as IUser,'media','delete')?"bg-gray-400 cursor-not-allowed": "bg-red-500 hover:bg-red-600"
                   } rounded-md focus:outline-none`}
                   disabled={
                     deletingItemId === item._id ||
