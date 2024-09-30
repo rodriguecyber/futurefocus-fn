@@ -29,6 +29,7 @@ const MembersPage: React.FC = () => {
     email: "",
     name: "",
     id: "",
+    role:""
   });
 
   const fetchAdmins = async () => {
@@ -121,11 +122,11 @@ const MembersPage: React.FC = () => {
 
   const closeModal = () => {
     setIsAddModalOpen(false);
-    setFormData({ email: "", name: "", id: "" });
+    setFormData({ email: "", name: "", id: "" ,role:""});
   };
 
   const openUpdateModal = (admin: AdminType) => {
-    setFormData({ email: admin.email, name: admin.name, id: admin._id });
+    setFormData({ email: admin.email, name: admin.name, id: admin._id ,role:""});
     setIsAddModalOpen(true);
   };
 
@@ -137,7 +138,7 @@ const MembersPage: React.FC = () => {
           <button
             disabled={!hasPermission(userData as IUser, "admins", "create")}
             onClick={() => {
-              setFormData({ email: "", name: "", id: "" });
+              setFormData({ email: "", name: "", id: "" ,role:''});
               setIsAddModalOpen(true);
             }}
             className={`px-4 py-2 ${
