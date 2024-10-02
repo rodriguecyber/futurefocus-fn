@@ -44,26 +44,23 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
     }
   }, [nextSlide, isLoading, slides.length, isPlaying]);
 
-  const getSlideClass = (index: number) => {
-    if (index === currentIndex) {
-      return "translate-x-0";
-    } else if (index === (currentIndex - 1 + slides.length) % slides.length) {
-      return "-translate-x-full";
-    } else if (index === (currentIndex + 1) % slides.length) {
-      return "translate-x-full";
-    } else {
-      return "hidden";
-    }
-  };
-
   const getSlideContent = (slide: SlideItem, index: number) => {
+    const isCurrent = index === currentIndex;
+    const isPrev = index === (currentIndex - 1 + slides.length) % slides.length;
+    const isNext = index === (currentIndex + 1) % slides.length;
+
+    if (!isCurrent && !isPrev && !isNext) {
+      return null;
+    }
+
+    const slideClasses = `
+      absolute top-0 transition-all duration-500 ease-in-out
+      ${isCurrent ? "left-1/4 w-2/5 h-full z-20" : "w-1/4 h-full z-10"}
+      ${isPrev ? "left-0" : isNext ? "right-0" : ""}
+    `;
+
     return (
-      <div
-        key={index}
-        className={`absolute w-full h-full transition-transform duration-500 ease-in-out ${getSlideClass(
-          index
-        )}`}
-      >
+      <div key={index} className={slideClasses}>
         {slide.type === "image" ? (
           <img
             src={slide.url}
@@ -92,7 +89,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
-        <div className="flex items-center justify-around w-full mx-auto mb-2">
+        <div className="flex items-center justify-between w-full mx-auto mb-2">
           <button
             onClick={prevSlide}
             className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
@@ -101,10 +98,8 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
           </button>
 
           <div className="flex flex-col items-center">
-            <div>
-              <p className="text-lg">{currentSlide.content}</p>
-            </div>
-            <div className="flex items-center space-x-4">
+            <p className="text-lg">{currentSlide.content}</p>
+            <div className="flex items-center space-x-4 mt-2">
               <div className="flex space-x-2">
                 {slides.map((_, index) => (
                   <button
