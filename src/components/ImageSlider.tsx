@@ -55,7 +55,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
     const slideClasses = `
       absolute top-0 transition-all duration-500 ease-in-out
-      ${isCurrent ? "left-1/4 w-2/5 h-full z-20" : "w-1/4 h-full z-10"}
+      ${isCurrent ? "left-1/4 w-1/2 h-full z-20" : "w-1/4 h-full z-10"}
       ${isPrev ? "left-0" : isNext ? "right-0" : ""}
     `;
 
@@ -65,7 +65,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
           <img
             src={slide.url}
             alt={slide.content}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover "
           />
         ) : (
           <div className="w-full h-full bg-black flex items-center justify-center">
@@ -84,12 +84,16 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
   return (
     <div className="relative w-full h-[400px] bg-black overflow-hidden">
-      <div className="relative w-full h-[350px]">
+      <div className="relative w-full h-[300px]">
         {slides.map((slide, index) => getSlideContent(slide, index))}
       </div>
 
+      <div className="h-[50px] flex items-center justify-center bg-black bg-opacity-75">
+        <p className="text-white text-lg">{currentSlide.content}</p>
+      </div>
+
       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
-        <div className="flex items-center justify-between w-full mx-auto mb-2">
+        <div className="flex items-center justify-between w-full mx-auto">
           <button
             onClick={prevSlide}
             className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
@@ -97,27 +101,24 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
             <FaChevronLeft />
           </button>
 
-          <div className="flex flex-col items-center">
-            <p className="text-lg">{currentSlide.content}</p>
-            <div className="flex items-center space-x-4 mt-2">
-              <div className="flex space-x-2">
-                {slides.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-2 h-2 rounded-full ${
-                      index === currentIndex ? "bg-white" : "bg-gray-400"
-                    }`}
-                    onClick={() => setCurrentIndex(index)}
-                  ></button>
-                ))}
-              </div>
-              <button
-                onClick={() => setIsPlaying(!isPlaying)}
-                className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
-              >
-                {isPlaying ? <FaPause /> : <FaPlay />}
-              </button>
+          <div className="flex items-center space-x-4">
+            <div className="flex space-x-2">
+              {slides.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-2 h-2 rounded-full ${
+                    index === currentIndex ? "bg-white" : "bg-gray-400"
+                  }`}
+                  onClick={() => setCurrentIndex(index)}
+                ></button>
+              ))}
             </div>
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
+            >
+              {isPlaying ? <FaPause /> : <FaPlay />}
+            </button>
           </div>
 
           <button
