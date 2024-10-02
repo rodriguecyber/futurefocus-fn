@@ -124,7 +124,7 @@ const ManageRolesPermissions: React.FC = () => {
         </h1>
 
         {/* Feature Management */}
-        <div className="mb-10">
+        {/* <div className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">Add Feature</h2>
           <div className="flex mb-4">
             <input
@@ -182,10 +182,10 @@ const ManageRolesPermissions: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> */}
 
         {/* Permission Management */}
-        <div className="mb-10">
+        {/* <div className="mb-10">
           <h2 className="text-2xl font-semibold mb-4">Add Permission</h2>
           <div className="flex mb-4">
             <select
@@ -247,7 +247,7 @@ const ManageRolesPermissions: React.FC = () => {
               ))}
             </tbody>
           </table>
-        </div>
+        </div> */}
 
         {/* Role Management */}
         <div className="mb-10">
