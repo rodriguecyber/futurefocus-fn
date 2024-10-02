@@ -53,10 +53,10 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       return null;
     }
 
-    const slideClasses = `
-      absolute top-0 transition-all duration-500 ease-in-out
-      ${isCurrent ? "left-1/4 w-1/2 h-full z-20" : "w-1/4 h-full z-10"}
-      ${isPrev ? "left-0" : isNext ? "right-0" : ""}
+    const slideClasses = ` 
+      absolute top-0 transition-all duration-500 ease-in-out  
+      ${isCurrent ? "lg:left-1/4  lg:w-2/5 lg:h-full z-20  ml-10 " : "lg:w-1/4 h-full z-10"}
+      ${isPrev ? "left-3" : isNext ? "right-3" : ""}
     `;
 
     return (
@@ -68,7 +68,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
             className="w-full h-full object-cover "
           />
         ) : (
-          <div className="w-full h-full bg-black flex items-center justify-center">
+          <div className="w-full h-full bg-black flex items-center justify-center ">
             <FaPlay className="text-white text-6xl" />
           </div>
         )}
@@ -84,7 +84,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
   return (
     <div className="relative w-full h-[400px] bg-black overflow-hidden">
-      <div className="relative w-full h-[300px]">
+      <div className="relative w-full h-[300px]  ">
         {slides.map((slide, index) => getSlideContent(slide, index))}
       </div>
 
