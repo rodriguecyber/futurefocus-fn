@@ -93,7 +93,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
       </div>
 
       <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
-        <div className="flex items-center justify-between w-full mx-auto">
+        <div className="flex items-center justify-around w-full lg:w-1/2 mx-auto">
           <button
             onClick={prevSlide}
             className="text-white p-2 rounded-full hover:bg-white hover:bg-opacity-20"
