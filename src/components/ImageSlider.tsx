@@ -55,7 +55,7 @@ const ImageVideoSlider: React.FC<ImageVideoSliderProps> = ({
 
     const slideClasses = ` 
       absolute top-0 transition-all duration-500 ease-in-out  
-      ${isCurrent ? "lg:left-1/4  lg:w-2/5 lg:h-full z-20  ml-10 " : "lg:w-1/4 h-full z-10"}
+      ${isCurrent ? "lg:left-1/4 w-full lg:w-2/5 lg:h-full z-20  ml-10 " : "lg:w-1/4 h-full z-10"}
       ${isPrev ? "left-3" : isNext ? "right-3" : ""}
     `;
 
