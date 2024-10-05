@@ -2,6 +2,9 @@
 import React, { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
+import { IUser } from "@/types";
+import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
+import { FaUser } from "react-icons/fa6";
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,11 +13,18 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [userData, setUserData] = useState<IUser>();
 
   const handleLogout = () => {
     logout();
   };
-
+useEffect(() => {
+  const fetchUserData = async () => {
+    await fetchUser();
+    setUserData(await getLoggedUserData());
+  };
+  fetchUserData();
+}, []);
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
   };
@@ -55,7 +65,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </div>
             <div className="flex items-center sm:hidden">
               <button onClick={toggleMobileMenu} aria-label="Toggle menu">
-                {/* Simple hamburger icon */}
+            
                 <div className="flex flex-col justify-center items-center">
                   <span className="block w-6 h-1 bg-gray-900 mb-1"></span>
                   <span className="block w-6 h-1 bg-gray-900 mb-1"></span>
@@ -70,6 +80,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               >
                 Logout
               </button>
+              <div className="flex flex-row gap-2 items-center">
+                <FaUser size={40}  className="bg-gray-500 rounded-full p-2"/>
+                <span className="flex flex-col text-center">
+                  <p className="hidden md:block ">{userData?.name}</p>
+                  <p className="text-gray-600">{userData?.role.role}</p>
+                </span>
+              </div>
             </div>
           </div>
         </div>

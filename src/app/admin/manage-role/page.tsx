@@ -120,7 +120,7 @@ const ManageRolesPermissions: React.FC = () => {
     <Layout>
       <div className="max-w-6xl mx-auto p-5">
         <h1 className="text-3xl font-bold mb-6">
-          Manage Roles, Features, and Permissions
+          Manage Roles and Permissions
         </h1>
 
         {/* Feature Management */}
@@ -328,7 +328,7 @@ const ManageRolesPermissions: React.FC = () => {
             ))}
           </select>
           <h3 className="text-lg font-semibold mb-2">Select Permissions</h3>
-          <div className="flex flex-wrap mb-4">
+          <div className="grid grid-flow-row lg:grid-rows-3 md:grid-cols-6 grid-cols-2 mb-4 ">
             {permissions.map((permission) => (
               <label key={permission._id} className="mr-4">
                 <input

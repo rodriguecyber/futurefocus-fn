@@ -1,10 +1,12 @@
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
+import { useState } from "react";
 
 let loggedUserData:any = null; 
 
 export const fetchUser = async () => {
   try {
+
     const token = localStorage.getItem("ffa-admin");
     if (!token) {
       throw new Error("No token found");
@@ -25,6 +27,7 @@ export const fetchUser = async () => {
       error.response?.data?.message || "Failed to fetch user data"
     );
   }
+
 };
 
 export const getLoggedUserData = () => {
