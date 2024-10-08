@@ -42,25 +42,22 @@ export const AuthContext = createContext<AuthContextData>(
 const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
   const [loggedUser, setLoggedUser] = useState<Admin | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-
-  const login = async (userData: Admin) => {
-    setIsLoading(true);
-    try {
-      const response = await axios.post(
-        `${API_BASE_URL}/admin/login`,
-        userData,
-        { withCredentials: true }
-      );
-      setLoggedUser(response.data);
-      toast.success("Login successful");
-      localStorage.setItem("ffa-admin", response.data.token);
-      window.location.href = "/admin";
-    } catch (error: any) {
-      handleAxiosError(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const login = async (userData: Admin) => {
+  setIsLoading(true);
+  try {
+    const response = await axios.post(`${API_BASE_URL}/admin/login`, userData, {
+      withCredentials: true,
+    });
+    setLoggedUser(response.data);
+    localStorage.setItem("ffa-admin", response.data.token);
+    window.location.href = `two-factor-auth/${response.data.id}`;
+    toast.success("Check email for OTP");
+  } catch (error) {
+    handleAxiosError(error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   const fetchTeam = async (): Promise<TeamMember[]> => {
     setIsLoading(true);
