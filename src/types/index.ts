@@ -4,7 +4,11 @@ export interface Member {
   email: string;
   role: string;
 }
-
+export interface Video {
+  url: string;
+  title: string;
+  type: string;
+}
 export interface Feature {
   _id: string;
   feature: string;

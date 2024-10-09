@@ -32,6 +32,9 @@ const MediaPostForm: React.FC = () => {
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [userData, setUserData] = useState<IUser | null>(null);
+  const [url,setUrl] = useState('')
+  const [type,setType] = useState('video')
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -43,7 +46,6 @@ const MediaPostForm: React.FC = () => {
         setMediaItems(mediaResponse.data);
         setUserData(getLoggedUserData()); 
       } catch (error) {
-        console.error("Error fetching data:", error);
       }
     };
     fetchData();
@@ -59,6 +61,16 @@ const MediaPostForm: React.FC = () => {
       resetForm();
     }
   }, [editingItemId, mediaItems]);
+const handleAdd=async()=>{
+try {
+  const response = await axios.post(`${API_BASE_URL}/media/youtube`,{
+    type,url
+  });
+  toast.success(response.data.message)
+} catch (error) {
+  toast.error('failed try again')
+}
+}
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -116,15 +128,15 @@ const MediaPostForm: React.FC = () => {
       }
 
       if (response.status === 200 || response.status === 201) {
-        console.log("File uploaded/updated successfully:", response.data);
+      
         //@ts-expect-error rr
         setMediaItems();
         resetForm();
       } else {
-        console.error("File upload/update failed:", response.data);
+       
       }
     } catch (error) {
-      console.error("Error uploading/updating file:", error);
+ 
       if (axios.isAxiosError(error) && error.response) {
         toast.error(`Error: ${error.response.data.message}`);
       } else {
@@ -169,6 +181,36 @@ const MediaPostForm: React.FC = () => {
 
   return (
     <Layout>
+      <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10 text-center">
+        <h1 className="text-3xl font-bold mb-4">Post youtube video</h1>
+        <div className="space-y-4">
+          <input
+            onChange={(e) => setUrl(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            type="text"
+            placeholder="youtube link"
+          />
+          <select
+            onChange={(e) => setType(e.target.value)}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            name="type"
+            id=""
+          >
+            <option value="vieo">video</option>
+            <option value="beat">beat</option>
+          </select>
+          <button
+            className={`inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
+              !hasPermission(userData as IUser, "media", "create")
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700"
+            } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+            onClick={() => handleAdd()}
+          >
+            Post
+          </button>
+        </div>
+      </div>
       <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg mt-10">
         <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
           {editingItemId ? "Edit Media" : "Post Media"}
@@ -298,7 +340,11 @@ const MediaPostForm: React.FC = () => {
               <div className="text-right space-x-2">
                 <button
                   onClick={() => handleEdit(item)}
-                  className={`px-3 py-1 text-sm text-white ${!hasPermission(userData as IUser,'media','update')?"bg-gray-400 cursor-not-allowed":"bg-blue-500 rounded-md hover:bg-blue-600"} focus:outline-none`}
+                  className={`px-3 py-1 text-sm text-white ${
+                    !hasPermission(userData as IUser, "media", "update")
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-blue-500 rounded-md hover:bg-blue-600"
+                  } focus:outline-none`}
                   disabled={
                     editingItemId === item._id ||
                     deletingItemId === item._id ||
@@ -312,7 +358,9 @@ const MediaPostForm: React.FC = () => {
                   className={`px-3 py-1 text-sm text-white ${
                     deletingItemId === item._id
                       ? "bg-red-400 cursor-not-allowed"
-                      :  !hasPermission(userData as IUser,'media','delete')?"bg-gray-400 cursor-not-allowed": "bg-red-500 hover:bg-red-600"
+                      : !hasPermission(userData as IUser, "media", "delete")
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600"
                   } rounded-md focus:outline-none`}
                   disabled={
                     deletingItemId === item._id ||

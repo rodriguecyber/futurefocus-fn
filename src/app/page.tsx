@@ -8,15 +8,31 @@ import OurServices from "@/components/OurServices";
 import WhyUs from "@/components/whyUs";
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
+import { Video } from "@/types";
+import VideoGallery from "@/components/YouTubeCarousel";
 
 export default function Home() {
   const [slides, setSlides] = useState<SlideItem[]>([]);
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [beat, setBeat] = useState<Video[]>([]);
+
 
   useEffect(() => {
     const handleFetch = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/media`);
         setSlides(response.data);
+       
+      } catch (error) {
+        console.error("Error fetching slide data:", error);
+       
+      }
+    };
+    const handleFetchyYoutube = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/media/youtube`);
+        setVideos(response.data.video);
+        setBeat(response.data.beat);
         console.log(response.data)
        
       } catch (error) {
@@ -24,6 +40,7 @@ export default function Home() {
        
       }
     };
+    handleFetchyYoutube()
     handleFetch();
   }, []);
   return (
@@ -33,6 +50,15 @@ export default function Home() {
       <OurServices />
       <WhyUs />
       <OurCourses />
+      <h1 className="text-teal-500 text-xl text-center">
+        Videos from our Video Studio
+      </h1>
+      <VideoGallery videos={videos} />
+      <h1 className="text-teal-500 text-xl text-center">
+        {" "}
+        Beats from our Audio Studio
+      </h1>
+      <VideoGallery videos={beat} />
       <Footer />
     </div>
   );
