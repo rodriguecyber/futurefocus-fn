@@ -51,12 +51,12 @@ export default function Home() {
       <WhyUs />
       <OurCourses />
       <h1 className="text-teal-500 text-xl text-center">
-        Videos from our Video Studio
+       Our Videos
       </h1>
       <VideoGallery videos={videos} />
       <h1 className="text-teal-500 text-xl text-center">
         {" "}
-        Beats from our Audio Studio
+        Our Beats
       </h1>
       <VideoGallery videos={beat} />
       <Footer />

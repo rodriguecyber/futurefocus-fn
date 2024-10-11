@@ -10,7 +10,7 @@ const Page = () => {
   const handleChangeEmail = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-  const handleSendEmail = async () => {
+  const handleSendEmail = async () => { 
    try {
     if(email==''|| !email.includes("@gmail.com")){
         toast.error('enter valid email')
