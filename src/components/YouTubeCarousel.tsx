@@ -30,7 +30,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
 
   useEffect(() => {
     if (!isLoading && videos.length > 0 && isPlaying) {
-      const interval = setInterval(nextSlide, 5000);
+      const interval = setInterval(nextSlide, 3000);
       return () => clearInterval(interval);
     }
   }, [nextSlide, isLoading, videos.length, isPlaying]);
@@ -73,12 +73,12 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
   }
 
   return (
-    <div className="relative w-full mx-auto   h-[300px] md:h-[400px] overflow-hidden">
-      <div className="relative w-full h-[520px]  ">
+    <div className="relative w-full mx-auto h-[300px] md:h-[400px] overflow-hidden px-3">
+      <div className="relative w-full h-[520px]   ">
         {videos.map((video, index) => getVideoContent(video, index))}
       </div>
 
-      <div className="flex items-center justify-around w-full lg:w-1/2 mx-auto absolute bottom-0 left-0 right-0 p-4">
+      <div className="flex items-center justify-around w-full lg:w-1/2 mx-10 absolute bottom-0 left-0 right-0 p-4">
         <button
           onClick={prevSlide}
           className="p-2 rounded-full hover:bg-gray-200"
