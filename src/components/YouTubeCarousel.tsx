@@ -73,47 +73,45 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
   }
 
   return (
-    <div className="relative w-full mx-auto  h-[400px] overflow-hidden">
-      <div className="relative w-ful h-[320px] mx-10 ">
+    <div className="relative w-full mx-auto   h-[300px] md:h-[400px] overflow-hidden">
+      <div className="relative w-full h-[520px]  ">
         {videos.map((video, index) => getVideoContent(video, index))}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 p-4">
-        <div className="flex items-center justify-around w-full lg:w-1/2 mx-auto">
-          <button
-            onClick={prevSlide}
-            className="p-2 rounded-full hover:bg-gray-200"
-          >
-            <FaChevronLeft />
-          </button>
+      <div className="flex items-center justify-around w-full lg:w-1/2 mx-auto absolute bottom-0 left-0 right-0 p-4">
+        <button
+          onClick={prevSlide}
+          className="p-2 rounded-full hover:bg-gray-200"
+        >
+          <FaChevronLeft />
+        </button>
 
-          <div className="flex items-center space-x-4">
-            <div className="flex space-x-2">
-              {videos.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-2 h-2 rounded-full ${
-                    index === currentIndex ? "bg-black" : "bg-gray-400"
-                  }`}
-                  onClick={() => setCurrentIndex(index)}
-                />
-              ))}
-            </div>
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="p-2 rounded-full hover:bg-gray-200"
-            >
-              {isPlaying ? <FaPause /> : <FaPlay />}
-            </button>
+        <div className="flex items-center space-x-4">
+          <div className="flex space-x-2">
+            {videos.map((_, index) => (
+              <button
+                key={index}
+                className={`w-2 h-2 rounded-full ${
+                  index === currentIndex ? "bg-black" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentIndex(index)}
+              />
+            ))}
           </div>
-
           <button
-            onClick={nextSlide}
+            onClick={() => setIsPlaying(!isPlaying)}
             className="p-2 rounded-full hover:bg-gray-200"
           >
-            <FaChevronRight />
+            {isPlaying ? <FaPause /> : <FaPlay />}
           </button>
         </div>
+
+        <button
+          onClick={nextSlide}
+          className="p-2 rounded-full hover:bg-gray-200"
+        >
+          <FaChevronRight />
+        </button>
       </div>
     </div>
   );
