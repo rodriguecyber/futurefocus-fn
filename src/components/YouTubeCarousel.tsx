@@ -43,14 +43,16 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
     if (!isCurrent && !isPrev && !isNext) return null;
 
     const videoId = new URL(video.url).searchParams.get("v");
-    const slideClasses = `
+    const slideClasses = ` 
       absolute top-0 transition-all duration-500 ease-in-out
       ${
         isCurrent
-          ? "lg:left-1/3 w-full lg:w-1/3 z-20 lg:ml-10"
-          : "lg:w-1/3 z-10 hidden lg:block"
+          ? "lg:left-1/3 w-full px-3 lg:px-0 lg:w-1/3  lg:h-full z-20 "
+          : "lg:w-1/3 h-full z-10   hidden lg:block"
       }
+      ${isPrev ? "left-2 pr-3" : isNext ? "right-2 pl-3" : ""}
     `;
+
 
     return (
       <div key={index} className={slideClasses}>
@@ -73,12 +75,12 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
   }
 
   return (
-    <div className="relative w-full mx-auto h-[300px] md:h-[400px] overflow-hidden px-3">
+    <div className="  w-full mx-auto h-[300px] md:h-[400px] overflow-hidden flex flex-col ">
       <div className="relative w-full h-[520px]   ">
         {videos.map((video, index) => getVideoContent(video, index))}
       </div>
 
-      <div className="flex items-center justify-around w-full lg:w-1/2 mx-10 absolute bottom-0 left-0 right-0 p-4">
+      <div className="lg:flex relative  items-center hidden justify-around w-full  mx-10 bottom-0 left-0 right-0 p-4">
         <button
           onClick={prevSlide}
           className="p-2 rounded-full hover:bg-gray-200"
@@ -87,17 +89,15 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
         </button>
 
         <div className="flex items-center space-x-4">
-          <div className="flex space-x-2">
+          <div className="flex space-x-2  ">
             {videos.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full ${
-                  index === currentIndex ? "bg-black" : "bg-gray-400"
-                }`}
-                onClick={() => setCurrentIndex(index)}
-              />
+                className={`w-2 h-2 rounded-full ${index === currentIndex ? "bg-black" : "bg-gray-400"}`}
+                onClick={() => setCurrentIndex(index)} />
             ))}
           </div>
+
           <button
             onClick={() => setIsPlaying(!isPlaying)}
             className="p-2 rounded-full hover:bg-gray-200"
@@ -113,7 +113,11 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
           <FaChevronRight />
         </button>
       </div>
+    
+    <a className=" bg-blue-600  hover:bg-blue-800 text-white rounded cursor-pointer mx-auto p-2 m-4 ">View More</a>
     </div>
+    
+
   );
 };
 
