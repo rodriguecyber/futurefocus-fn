@@ -5,7 +5,7 @@ import axios from "axios";
 export interface Course {
   _id?: string;
   title: string;
-  // description: string;
+  active: boolean;
   rating: number;
   image: string;
   scholarship: number;
@@ -20,6 +20,7 @@ export const getCourses = async () => {
 
 export const addCourse = async (course: Course) => {
   return await axios.post<Course>(`${API_BASE_URL}/course/new`, course);
+ 
 };
 
 export const updateCourse = async (id: string, course: Course) => {

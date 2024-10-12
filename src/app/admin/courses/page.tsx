@@ -14,6 +14,7 @@ import Layout from "../Layout";
 import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
 import { IUser } from "@/types";
 import { hasPermission } from "@/config/hasPermission";
+import { toast } from "react-toastify";
 
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -58,13 +59,17 @@ const CoursesComponent: React.FC = () => {
       scholarship: Number(formData.get("scholarship")),
       nonScholarship: Number(formData.get("nonScholarship")),
       shifts: formData.get("shifts")?.toString().split(",") || [],
+      active: false
     };
 
     try {
       const response = await addCourse(newCourse);
-      setCourses([...courses, response.data]);
+      setCourses([...courses, response.data])
+      toast.success('courses added sucessfully')
     } catch (error) {
       console.error("Error adding course", error);
+      toast.error("failed to add course");
+
     } finally {
       setIsAddModalOpen(false);
     }
@@ -80,9 +85,10 @@ const CoursesComponent: React.FC = () => {
       rating: Number(formData.get("rating")),
       image: formData.get("image") as string,
       scholarship: Number(formData.get("scholarship")),
+      active: formData.get("active"),
       nonScholarship: Number(formData.get("nonScholarship")),
       shifts: formData.get("shifts")?.toString().split(",") || [],
-    } as Course;
+    } as unknown as Course;
 
     try {
       if (editingCourse?._id) {
@@ -90,8 +96,11 @@ const CoursesComponent: React.FC = () => {
         setCourses(
           courses.map((c) => (c._id === editingCourse._id ? updatedCourse : c))
         );
+      toast.success("courses updated sucessfully");
+
       }
     } catch (error) {
+      toast.error("failed to update course");
       console.error("Error updating course", error);
     } finally {
       setIsUpdateModalOpen(false);
@@ -104,10 +113,13 @@ const CoursesComponent: React.FC = () => {
       if (id) {
         await deleteCourse(id);
         setCourses(courses.filter((c) => c._id !== id));
+      toast.success("courses deleted sucessfully");
+
       } else {
         console.error("No id found for the course. Cannot delete.");
       }
     } catch (error) {
+      toast.error("failed to delete course");
       console.error("Error deleting course", error);
     }
   };
@@ -153,12 +165,19 @@ const CoursesComponent: React.FC = () => {
                   <h3 className="text-lg font-medium text-gray-900">
                     {course.title}
                   </h3>
-                  <div className="flex items-center mt-2">
-                    <span className="text-yellow-400">
-                      {"★".repeat(course.rating)}
-                    </span>
-                    <span className="ml-1 text-gray-500">
-                      ({course.rating})
+                  <div className="flex items-center mt-2  justify-between">
+                    <div className="">
+                      <span className="text-yellow-400">
+                        {"★".repeat(course.rating)}
+                      </span>
+                      <span className="ml-1 text-gray-500">
+                        ({course.rating})
+                      </span>
+                    </div>
+                    <span
+                      className={`${course.active ? "text-green-500" : "text-red-600"}`}
+                    >
+                      {course.active ? "Active" : "Disactive"}
                     </span>
                   </div>
                   <div className="mt-4 flex justify-between">
@@ -176,9 +195,15 @@ const CoursesComponent: React.FC = () => {
                       Update
                     </button>
                     <button
-                    disabled={!hasPermission(userData as IUser, "courses", "delete")}
+                      disabled={
+                        !hasPermission(userData as IUser, "courses", "delete")
+                      }
                       onClick={() => handleDelete(course._id)}
-                      className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${ !hasPermission(userData as IUser, "courses", "delete")?'bg-gray-400 text-white cursor-not-allowed': 'text-red-700 bg-red-100 hover:bg-red-200'} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
+                      className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
+                        !hasPermission(userData as IUser, "courses", "delete")
+                          ? "bg-gray-400 text-white cursor-not-allowed"
+                          : "text-red-700 bg-red-100 hover:bg-red-200"
+                      } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
                     >
                       Delete
                     </button>
@@ -274,7 +299,7 @@ const CoursesComponent: React.FC = () => {
               required
               className="mb-2 w-full px-3 py-2 border rounded"
             /> */}
-            <label htmlFor="titel">Rating</label>
+            <label htmlFor="title">Rating</label>
 
             <input
               type="number"
@@ -315,6 +340,17 @@ const CoursesComponent: React.FC = () => {
               className="mb-2 w-full px-3 py-2 border rounded"
               placeholder={editingCourse?.rating ? "non scholarship price" : ""}
             />
+            <label htmlFor="active">Enable / disable</label>
+
+            <select
+              name="active"
+              id=""
+              defaultValue={editingCourse?.active as any}
+              className="mb-2 w-full px-3 py-2 border rounded"
+            >
+              <option value="true">Enable</option>
+              <option value="false">Disable</option>
+            </select>
             <label htmlFor="titel">Shift separated by comma</label>
 
             <textarea
