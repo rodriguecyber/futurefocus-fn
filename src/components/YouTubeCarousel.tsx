@@ -93,8 +93,11 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
             {videos.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full ${index === currentIndex ? "bg-black" : "bg-gray-400"}`}
-                onClick={() => setCurrentIndex(index)} />
+                className={`w-2 h-2 rounded-full ${
+                  index === currentIndex ? "bg-black" : "bg-gray-400"
+                }`}
+                onClick={() => setCurrentIndex(index)}
+              />
             ))}
           </div>
 
@@ -113,11 +116,14 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
           <FaChevronRight />
         </button>
       </div>
-    
-    <a className=" bg-blue-600  hover:bg-blue-800 text-white rounded cursor-pointer mx-auto p-2 m-4 ">View More</a>
-    </div>
-    
 
+      <a
+        href="https://www.youtube.com/@kigalifamemedia"
+        className=" bg-blue-600  hover:bg-blue-800 text-white rounded cursor-pointer mx-auto p-2 m-4 "
+      >
+        View More
+      </a>
+    </div>
   );
 };
 

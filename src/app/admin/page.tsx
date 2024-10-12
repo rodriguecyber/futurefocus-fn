@@ -16,6 +16,11 @@ export interface MediaItem {
   content: string;
   videoUrl?: string;
 }
+interface YotubeV{
+  _id:string,
+  url:string,
+  type:string
+}
 
 const MediaPostForm: React.FC = () => {
   const [formData, setFormData] = useState<MediaItem>({
@@ -34,12 +39,37 @@ const MediaPostForm: React.FC = () => {
   const [userData, setUserData] = useState<IUser | null>(null);
   const [url,setUrl] = useState('')
   const [type,setType] = useState('video')
+  const [videos,setVideos] = useState<YotubeV[]>([])
+ const fetchYoutube = async () => {
+   try {
+     const [mediaResponse] = await Promise.all([
+       axios.get(`${API_BASE_URL}/media/youtube`),
+     ]);
+     const combinedMedia = [
+       ...mediaResponse.data.video,
+       ...mediaResponse.data.beat,
+     ];
+     setVideos(combinedMedia);
+   } catch (error) {}
+ };
+ const handledelateYoutube = async (id:string) => {
+   try {
+    setDeletingItemId(id);
+    await  axios.delete(`${API_BASE_URL}/media/youtube/${id}`)
 
+     toast.success('deleted succfully')
+     fetchYoutube()
+   } catch (error) {
+    toast.error('error deleting youtube')
+   }finally{
+      setDeletingItemId(null);
+   }
+ };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [mediaResponse, user] = await Promise.all([
+        const [mediaResponse] = await Promise.all([
           axios.get(`${API_BASE_URL}/media`),
           fetchUser(),
         ]);
@@ -49,6 +79,7 @@ const MediaPostForm: React.FC = () => {
       }
     };
     fetchData();
+    fetchYoutube()
   }, []);
 
   useEffect(() => {
@@ -355,6 +386,52 @@ try {
                 </button>
                 <button
                   onClick={() => handleDelete(item._id)}
+                  className={`px-3 py-1 text-sm text-white ${
+                    deletingItemId === item._id
+                      ? "bg-red-400 cursor-not-allowed"
+                      : !hasPermission(userData as IUser, "media", "delete")
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-red-500 hover:bg-red-600"
+                  } rounded-md focus:outline-none`}
+                  disabled={
+                    deletingItemId === item._id ||
+                    !hasPermission(userData as IUser, "media", "delete")
+                  }
+                >
+                  {deletingItemId === item._id ? "Deleting..." : "Delete"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mt-10 max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+        <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
+          YouTube Gallery
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {videos.map((item) => (
+            <div
+              key={item._id}
+              className="border border-gray-300 p-4 rounded-lg shadow-sm"
+            >
+              <p className="text-sm text-gray-700 mb-2">{item.type}</p>
+           
+              <div className="aspect-w-16 aspect-h-9 mb-4">
+                <iframe
+                  // width="560"
+                  // height="315"
+                  src={`https://www.youtube.com/embed/${new URL(item.url).searchParams.get("v")}`} 
+                  title={item.type} 
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="rounded-md"
+                ></iframe>
+              </div>
+              <div className="text-right space-x-2">
+                <button
+                  onClick={() => handledelateYoutube(item._id)}
                   className={`px-3 py-1 text-sm text-white ${
                     deletingItemId === item._id
                       ? "bg-red-400 cursor-not-allowed"

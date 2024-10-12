@@ -91,53 +91,41 @@ const Footer = () => {
               <p>futurefocusacademie@gmail.com</p>
             </span>
             <div className="flex flex-row gap-2 mt-4">
-              <a href="#">
+              <a href="https://x.com/FF_Academie">
                 <FaXTwitter className="text-2xl" />
               </a>
-              <a href="#">
+              <a href="https://www.instagram.com/future_focus_academy/">
                 <FaInstagram className="text-2xl" />
               </a>
-              <a href="#">
+              <a href="https://www.youtube.com/@kigalifamemedia">
                 <FaYoutube className="text-2xl" />
               </a>
-              <a href="#">
+              <a href="https://www.facebook.com/Futurefocuspics">
                 <FaFacebook className="text-2xl" />
               </a>
-              <a href="#">
+              {/* <a href="#">
                 <FaLinkedin className="text-2xl" />
-              </a>
+              </a> */}
             </div>
           </div>
 
-          {/* Gallery */}
+        
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4">Donate</h1>
             <div className="grid grid-cols-2 gap-2">
               <a href="/">
-                <img
-                  src="/momo.png"
-                  alt="momo"
-                  className="w-full h-auto"
-                />
+                <img src="/momo.png" alt="momo" className="w-full h-auto" />
               </a>
               <a href="/">
-                <img
-                  src="/aittel.png"
-                  alt="Airtel"
-                  className="w-full h-auto"
-                />
+                <img src="/aittel.png" alt="Airtel" className="w-full h-auto" />
               </a>
               <a href="/">
-                <img
-                  src="/paypal.png"
-                  alt="Paypal"
-                  className="w-full h-auto"
-                />
+                <img src="/paypal.png" alt="Paypal" className="w-full h-auto" />
               </a>
             </div>
           </div>
 
-          {/* Newsletter */}
+        
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4 text-center lg:text-left">
               Newsletter
@@ -147,9 +135,14 @@ const Footer = () => {
                 type="email"
                 placeholder="Your email"
                 className="py-3 px-2 flex-1 border-none outline-none text-black"
-                onChange={handleChangeEmail }
+                onChange={handleChangeEmail}
               />
-              <button className="bg-cyan-800 py-3 px-2" onClick={handleSubscribe}>Subscribe</button>
+              <button
+                className="bg-cyan-800 py-3 px-2"
+                onClick={handleSubscribe}
+              >
+                Subscribe
+              </button>
             </div>
           </div>
         </div>
