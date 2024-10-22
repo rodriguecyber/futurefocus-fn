@@ -34,7 +34,7 @@ const MembersPage: React.FC = () => {
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/admin/admins`);
+      const response = await axios.get(`${API_BASE_URL}/member/admins`);
       setAdmins(response.data);
     } catch (error) {
       console.error("Failed to fetch admins", error);
@@ -192,7 +192,7 @@ const MembersPage: React.FC = () => {
               <div>
                 <h1 className="font-bold">{admin.email}</h1>
                 <h1 className="text-gray-500">
-                  {admin.name?.toLocaleUpperCase() + ` (${admin.role?.role})`}
+                  {admin.name?.toLocaleUpperCase() + ` (${admin.role?.role|| 'No Role assigned yet'})`}
                 </h1>
               </div>
               <div className="flex flex-row-reverse gap-2">

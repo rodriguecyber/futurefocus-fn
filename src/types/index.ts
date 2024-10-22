@@ -73,3 +73,13 @@ export interface IRole {
   createdAt: string;
   updatedAt: string;
 }
+export interface TeamMember {
+  _id: string;
+  name: string;
+  image: string;
+  role: string;
+  position: string;
+  email: string;
+  instagram: string;
+  isAdmin:boolean
+}

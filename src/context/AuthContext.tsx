@@ -3,6 +3,7 @@ import { createContext, ReactNode, useContext, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import API_BASE_URL from "@/config/baseURL";
+import { TeamMember } from "@/types";
 
 interface Admin {
   email: string;
@@ -10,14 +11,7 @@ interface Admin {
   isSuperAdmin: boolean;
 }
 
-interface TeamMember {
-  _id: string;
-  name: string;
-  image: string;
-  role: string;
-  email: string;
-  instagram: string;
-}
+
 
 interface AuthContextData {
   signed: boolean;
@@ -45,13 +39,16 @@ const AuthContextAPI: React.FC<AuthProviderProps> = ({ children }) => {
 const login = async (userData: Admin) => {
   setIsLoading(true);
   try {
-    const response = await axios.post(`${API_BASE_URL}/admin/login`, userData, {
+    const response = await axios.post(`${API_BASE_URL}/member/login`, userData, {
       withCredentials: true,
     });
-    setLoggedUser(response.data);
-    localStorage.setItem("ffa-admin", response.data.token);
+    if(!response.data.id){
+      toast.error('you are not authorized')
+    window.location.href = `/admin/login`;
+return
+    }
     window.location.href = `two-factor-auth/${response.data.id}`;
-    toast.success("Check email for OTP");
+    toast.success(response.data.message);
   } catch (error) {
     handleAxiosError(error);
   } finally {

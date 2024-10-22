@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 
 let loggedUserData:any = null; 
-
+const[loading,setLoading] = useState(true)
 export const fetchUser = async () => {
   try {
 
@@ -12,20 +12,22 @@ export const fetchUser = async () => {
       throw new Error("No token found");
     }
 
-    const response = await axios.get(`${API_BASE_URL}/admin`, {
+    const response = await axios.get(`${API_BASE_URL}/member/logged-user`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     });
 
-    loggedUserData = response.data; 
+    loggedUserData = response.data.isAdmin?response.data:null; 
     return loggedUserData; 
   } catch (error: any) {
     console.error("Error fetching user data:", error);
     throw new Error(
       error.response?.data?.message || "Failed to fetch user data"
     );
+  }finally{
+    setLoading(false)
   }
 
 };

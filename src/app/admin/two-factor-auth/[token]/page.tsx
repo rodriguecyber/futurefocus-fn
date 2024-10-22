@@ -43,7 +43,7 @@ const ResetPasswordPage = () => {
       setIsLoading(true);
       const OTP = otp.join("");
       const response = await axios.post(
-        `${API_BASE_URL}/admin/two-factor/${token}`,
+        `${API_BASE_URL}/member/two-factor/${token}`,
         { OTP }
       );
       toast.success(response.data.message);

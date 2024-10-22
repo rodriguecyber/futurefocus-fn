@@ -7,6 +7,7 @@ import API_BASE_URL from "@/config/baseURL";
 import Layout from "../Layout";
 import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
 import { hasPermission } from "@/config/hasPermission";
+import { toast } from "react-toastify";
 
 const ManageRolesPermissions: React.FC = () => {
   const [features, setFeatures] = useState<IFeature[]>([]);
@@ -65,21 +66,21 @@ const ManageRolesPermissions: React.FC = () => {
   };
 
   const fetchUsers = async () => {
-    const res = await axios.get<IUser[]>(`${API_BASE_URL}/admin/admins`);
+    const res = await axios.get<IUser[]>(`${API_BASE_URL}/member/admins`);
     setUsers(res.data);
   };
 
-  const handleAddFeature = async () => {
-    await axios.post(`${API_BASE_URL}/role/feature`, newFeature);
-    fetchFeatures();
-    setNewFeature({ feature: "", web: "website" });
-  };
+  // const handleAddFeature = async () => {
+  //   await axios.post(`${API_BASE_URL}/role/feature`, newFeature);
+  //   fetchFeatures();
+  //   setNewFeature({ feature: "", web: "website" });
+  // };
 
-  const handleAddPermission = async () => {
-    await axios.post(`${API_BASE_URL}/role/permission`, newPermission);
-    fetchPermissions();
-    setNewPermission({ feature: "", permission: "" });
-  };
+  // const handleAddPermission = async () => {
+  //   await axios.post(`${API_BASE_URL}/role/permission`, newPermission);
+  //   fetchPermissions();
+  //   setNewPermission({ feature: "", permission: "" });
+  // };
 
   const handleAddRole = async () => {
     await axios.post(`${API_BASE_URL}/role`, newRole);
@@ -87,33 +88,48 @@ const ManageRolesPermissions: React.FC = () => {
     setNewRole({ role: "", permission: [] });
   };
 
-  const handleDeleteFeature = async (id: string) => {
-    await axios.delete(`${API_BASE_URL}/role/feature`, { data: { id } });
-    fetchFeatures();
-  };
+  // const handleDeleteFeature = async (id: string) => {
+  //   await axios.delete(`${API_BASE_URL}/role/feature`, { data: { id } });
+  //   fetchFeatures();
+  // };
 
-  const handleDeletePermission = async (id: string) => {
-    await axios.delete(`${API_BASE_URL}/role/permission`, { data: { id } });
-    fetchPermissions();
-  };
+  // const handleDeletePermission = async (id: string) => {
+  //   await axios.delete(`${API_BASE_URL}/role/permission`, { data: { id } });
+  //   fetchPermissions();
+  // };
 
   const handleDeleteRole = async (id: string) => {
-    await axios.delete(`${API_BASE_URL}/role`, { data: { id } });
-    fetchRoles();
+   try {
+     await axios.delete(`${API_BASE_URL}/role`, { data: { id } });
+     toast.success('role deleted successfully')
+     fetchRoles();
+   } catch (error) {
+    toast.error('failed to delete role')
+   }
   };
 
   const handleAssignPermissionsToRole = async () => {
-    await axios.put(`${API_BASE_URL}/role/${selectedRole}`, {
-      permissions: selectedPermissions,
-    });
-    fetchRoles();
+   try {
+     await axios.put(`${API_BASE_URL}/role/${selectedRole}`, {
+       permissions: selectedPermissions,
+     });
+     toast.success(`${selectedPermissions} assigned ${selectedRole}`)
+     fetchRoles();
+   } catch (error) {
+    toast.error('failed to assing permission')
+   }
   };
 
   const handleAssignRoleToUser = async () => {
-    await axios.put(`${API_BASE_URL}/admin/role/${selectedUser}`, {
-      role:selectedRole,
-    });
-    fetchUsers();
+   try {
+     await axios.put(`${API_BASE_URL}/others/role/${selectedUser}`, {
+       role: selectedRole,
+     });
+     toast.success(`$role assigned user`);
+     fetchUsers();
+   } catch (error) {
+    toast.error('failed toassing role to user')
+   }
   };
 
   return (

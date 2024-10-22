@@ -6,54 +6,59 @@ import { useAuth } from "@/context/AuthContext";
 import { toast } from "react-toastify";
 import withAdminAuth from "@/components/withAdminAuth";
 import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
-import { IUser } from "@/types";
+import { IUser, TeamMember } from "@/types";
 import { hasPermission } from "@/config/hasPermission";
-
-interface TeamMember {
-  _id: string;
-  name: string;
-  image: string;
-  role: string;
-  email: string;
-  instagram: string;
-}
+import axios from "axios";
+import API_BASE_URL from "@/config/baseURL";
 
 const MembersPage: React.FC = () => {
   const { fetchTeam, addTeamMember, updateTeamMember, deleteTeamMember } =
     useAuth();
 
   const [members, setMembers] = useState<TeamMember[]>([]);
-  const [isLoading, setIsLoading] = useState(true); // Loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [userData, setUserData] = useState<IUser | null>(null);
+
+  // New state to handle toggles for each member
+  const [toggles, setToggles] = useState<{ [key: string]: boolean }>({});
 
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
     image: "",
     role: "",
+    position: "",
     email: "",
     instagram: "",
+    isAdmin:false
   });
 
   useEffect(() => {
     const loadTeamMembers = async () => {
-      setIsLoading(true); 
+      setIsLoading(true);
       try {
+        await fetchUser()
         const teamMembers = await fetchTeam();
-         fetchUser(),
-          setMembers(teamMembers);
-         setUserData(getLoggedUserData()); 
+        setMembers(teamMembers);
+        setUserData(getLoggedUserData());
+
+        // Initialize toggles for each member
+        const initialToggles: { [key: string]: boolean } = {};
+        teamMembers.forEach((member) => {
+          initialToggles[member._id] = member.isAdmin; // Set default toggle state
+        });
+        setToggles(initialToggles);
       } catch (error) {
         toast.error("Failed to fetch team data");
       } finally {
-        setIsLoading(false); 
+        setIsLoading(false);
       }
     };
     loadTeamMembers();
-  },[] );
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -91,8 +96,22 @@ const MembersPage: React.FC = () => {
       await deleteTeamMember(id);
       setMembers(members.filter((member) => member._id !== id));
       toast.success("Member deleted successfully");
+      const { [id]: _, ...remainingToggles } = toggles;
+      setToggles(remainingToggles);
     } catch (error) {
       toast.error("Failed to delete member");
+    }
+  };
+
+  const handleToggle = async(id: string) => {
+    try {
+      await axios.put(`${API_BASE_URL}/member/toogle-admin/${id}`);
+      setToggles((prev) => ({
+        ...prev,
+        [id]: !prev[id],
+      }));
+    } catch (error) {
+     toast.error('failed to switch') 
     }
   };
 
@@ -105,8 +124,10 @@ const MembersPage: React.FC = () => {
       name: "",
       image: "",
       role: "",
+      position: "",
       email: "",
       instagram: "",
+      isAdmin:false
     });
   };
 
@@ -145,30 +166,58 @@ const MembersPage: React.FC = () => {
                 />
                 <div className="flex-1">
                   <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                  <p className="text-gray-700 mb-1">{member.role}</p>
+                  <p className="text-gray-700 mb-1">{member.position}</p>
                 </div>
-                <div className="flex mt-2 flex-col gap-2">
-                  <button
-                    disabled={
-                      !hasPermission(userData as IUser, "team", "update")
-                    }
-                    onClick={() => handleEdit(member)}
-                    className={`px-4 py-2 ${!hasPermission(userData as IUser, "team", "create")
-                ? "bg-gray-400 cursor-not-allowed":'bg-green-600'} text-white rounded-md`}
-                  >
-                    Edit
-                  </button>
-                  <button
-                    disabled={
-                      !hasPermission(userData as IUser, "team", "create")
-                    }
-                    onClick={() => handleDelete(member._id)}
-                    className={`px-4 py-2 ${!hasPermission(userData as IUser, "team", "create")
-                ? "bg-gray-400 cursor-not-allowed":'bg-red-600'} text-white rounded-md`}
-                  
-                  >
-                    Delete
-                  </button>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={member._id}
+                      className="toggle-checkbox hidden"
+                      checked={toggles[member._id] || false}
+                      onChange={() => handleToggle(member._id)}
+                    />
+                    <div
+                      onClick={() => handleToggle(member._id)}
+                      className={`toggle-container w-16 h-8 rounded-full flex items-center p-1 cursor-pointer ${
+                        toggles[member._id] ? "bg-blue-500" : "bg-gray-300"
+                      }`}
+                    >
+                      <div
+                        className={`toggle-circle w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                          toggles[member._id] ? "translate-x-8" : ""
+                        }`}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex mt-2 flex-col gap-2">
+                    <button
+                      disabled={
+                        !hasPermission(userData as IUser, "team", "update")
+                      }
+                      onClick={() => handleEdit(member)}
+                      className={`px-4 py-2 ${
+                        !hasPermission(userData as IUser, "team", "update")
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-green-600"
+                      } text-white rounded-md`}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      disabled={
+                        !hasPermission(userData as IUser, "team", "delete")
+                      }
+                      onClick={() => handleDelete(member._id)}
+                      className={`px-4 py-2 ${
+                        !hasPermission(userData as IUser, "team", "delete")
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-red-600"
+                      } text-white rounded-md`}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -202,10 +251,10 @@ const MembersPage: React.FC = () => {
             />
             <input
               type="text"
-              name="role"
-              value={formData.role}
+              name="position"
+              value={formData.position}
               onChange={handleChange}
-              placeholder="Role"
+              placeholder="Position"
               className="w-full mb-4 p-2 border rounded-md"
               required
             />
