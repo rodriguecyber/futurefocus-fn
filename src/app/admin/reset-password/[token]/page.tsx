@@ -49,7 +49,7 @@ const ResetPasswordPage = () => {
     try {
       setIsLoading(true);
       const response = await axios.put(
-        `${API_BASE_URL}/admin/reset-password/${token}`,
+        `${API_BASE_URL}/member/reset-password/${token}`,
         { password:password }
       );
       toast.success(response.data.message);

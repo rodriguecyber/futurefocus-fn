@@ -5,7 +5,7 @@ import API_BASE_URL from "@/config/baseURL";
 import { toast } from "react-toastify";
 import { Course } from "@/context/courseContext";
 
-
+// Define the shape of the application data
 interface ApplicationData {
   name: string;
   email: string;
@@ -14,6 +14,12 @@ interface ApplicationData {
   selectedShift: string;
   intake: string;
   message: string;
+}
+
+// Define the shape of the intake data
+interface IntakeData {
+  _id: string;
+  intake: string;
 }
 
 const ApplicationForm: React.FC = () => {
@@ -29,7 +35,7 @@ const ApplicationForm: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [intakes, setIntakes] = useState<{ _id: string; intake: string }[]>([]);
+  const [intakes, setIntakes] = useState<IntakeData[]>([]);
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -50,21 +56,22 @@ const ApplicationForm: React.FC = () => {
         setLoading(false);
       }
     };
+
     const getIntakes = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/admin/intake`);
         setIntakes(response.data.intakes);
-        if (response.data.length > 0) {
+        if (response.data.intakes.length > 0) {
           setFormData((prevData) => ({
             ...prevData,
             intake: response.data.intakes[0].intake,
-          
           }));
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
+
     getIntakes();
     fetchCourses();
   }, []);
@@ -118,14 +125,13 @@ const ApplicationForm: React.FC = () => {
         selectedCourse: courses.length > 0 ? courses[0].title : "",
         selectedShift: courses.length > 0 ? courses[0].shifts[0] : "",
         message: "",
-        intake: intakes[0].intake,
+        intake: intakes.length > 0 ? intakes[0].intake : "",
       });
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        // Display error message from the backend if available
         const errorMessage =
           error.response.data.message || "An error occurred. Please try again.";
-        console.log(error.response.data);
+        console.error(error.response.data);
         toast.error(errorMessage);
       } else {
         toast.error("An unexpected error occurred. Please try again.");
@@ -205,7 +211,7 @@ const ApplicationForm: React.FC = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             {courses
-              .filter((course) => course.active === true)
+              .filter((course) => course.active)
               .map((course) => (
                 <option key={course.title} value={course.title}>
                   {course.title}
@@ -243,7 +249,7 @@ const ApplicationForm: React.FC = () => {
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           >
             <option value="" disabled>
-              {" select Intake (Required)"}
+              Select Intake (Required)
             </option>
             {intakes.map((intake) => (
               <option key={intake._id} value={intake.intake}>

@@ -18,7 +18,7 @@ const Page = () => {
     }
          setIsLoading(true)
      const response = await axios.post(
-       `${API_BASE_URL}/admin/forgot-password`,
+       `${API_BASE_URL}/member/forgot-password`,
        {
          email: email,
        }
