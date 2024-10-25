@@ -29,7 +29,7 @@ const Shift = () => {
   const handleDelete = async (id: string) => {
     try {
       setDeletingId(id);
-      const response = await axios.delete(`${API_BASE_URL}/admin/intake/${id}`);
+      const response = await axios.delete(`${API_BASE_URL}/others/intake/${id}`);
       await getIntakes();
       toast.success(response.data.message);
     } catch (error) {
@@ -42,7 +42,7 @@ const Shift = () => {
   const getIntakes = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/admin/intake`);
+      const response = await axios.get(`${API_BASE_URL}/others/intake`);
       setIntakes(response.data.intakes);
       await fetchUser()
       setUserData(await getLoggedUserData())

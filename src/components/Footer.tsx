@@ -1,7 +1,6 @@
 "use client";
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
-import { response } from "express";
 import React, { useState } from "react";
 import {
   FaEnvelope,
@@ -24,7 +23,7 @@ const Footer = () => {
      if(!email.includes('@gmail.com'))
   toast.error('enter valid email')
     try {
-    const response = await axios.post(`${API_BASE_URL}/admin/subscribe`, {
+    const response = await axios.post(`${API_BASE_URL}/others/subscribe`, {
       email:email
     })
     toast.success(response.data.message)
