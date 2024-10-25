@@ -3,7 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 
 let loggedUserData:any = null; 
-const[loading,setLoading] = useState(true)
+// const[loading,setLoading] = useState(true)
 export const fetchUser = async () => {
   try {
 
@@ -27,7 +27,7 @@ export const fetchUser = async () => {
       error.response?.data?.message || "Failed to fetch user data"
     );
   }finally{
-    setLoading(false)
+    // setLoading(false)
   }
 
 };
