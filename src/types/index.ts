@@ -77,7 +77,7 @@ export interface TeamMember {
   _id: string;
   name: string;
   image: string;
-  role: string;
+  role: {role:string};
   position: string;
   email: string;
   instagram: string;

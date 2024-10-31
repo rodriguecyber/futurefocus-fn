@@ -1,18 +1,10 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { TeamMember } from "@/types";
 import React, { useEffect, useState } from "react";
 import { FaEnvelope, FaInstagram } from "react-icons/fa";
 import { toast } from "react-toastify";
-
-interface TeamMember {
-  _id: string;
-  name: string;
-  image: string;
-  role: string;
-  email: string;
-  instagram: string;
-}
 
 const OurTeam = () => {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -59,7 +51,7 @@ const OurTeam = () => {
             </div>
             <div className="mt-4 text-center">
               <h1 className="text-lg font-semibold">{member.name}</h1>
-              <p className="text-gray-500">{member.role}</p>
+              <p className="text-gray-500">{member.role.role}</p>
             </div>
           </div>
         ))}
