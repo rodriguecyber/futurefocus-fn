@@ -51,7 +51,7 @@ const OurTeam = () => {
             </div>
             <div className="mt-4 text-center">
               <h1 className="text-lg font-semibold">{member.name}</h1>
-              <p className="text-gray-500">{member.role.role}</p>
+              <p className="text-gray-500">{member.position}</p>
             </div>
           </div>
         ))}
