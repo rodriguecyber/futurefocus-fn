@@ -56,7 +56,7 @@ const Shift = () => {
   const handleSubmit = async () => {
     try {
       setIsSubmitting(true);
-      const response = await axios.post(`${API_BASE_URL}/admin/intake`, {
+      const response = await axios.post(`${API_BASE_URL}/others/intake`, {
         intake: intake,
       });
       toast.success(response.data.message);
