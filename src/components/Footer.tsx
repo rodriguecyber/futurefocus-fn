@@ -111,15 +111,21 @@ const Footer = () => {
         
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4">Donate</h1>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-2 ">
               <a href="/">
                 <img src="/momo.png" alt="momo" className="w-full h-auto" />
               </a>
               <a href="/">
-                <img src="/aittel.png" alt="Airtel" className="w-full h-auto" />
+                <img src="/airtel.png" alt="Airtel" className="w-full h-auto" />
               </a>
               <a href="/">
-                <img src="/paypal.png" alt="Paypal" className="w-full h-auto" />
+                <img src="/ppal.png" alt="Payapal" className="w-full h-auto" />
+              </a>
+              <a href="/">
+                <img src="/visa.png" alt="Visa" className="w-full h-auto" />
+              </a>
+              <a href="/">
+                <img src="/spen.png" alt="Spen" className="w-full h-auto" />
               </a>
             </div>
           </div>
