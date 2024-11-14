@@ -32,6 +32,7 @@ const MembersPage: React.FC = () => {
     role: "",
     position: "",
     email: "",
+    phone:'',
     instagram: "",
     isAdmin:false
   });
@@ -127,6 +128,7 @@ const MembersPage: React.FC = () => {
       name: "",
       image: "",
       role: "",
+      phone:"",
       position: "",
       email: "",
       instagram: "",
@@ -276,6 +278,15 @@ const MembersPage: React.FC = () => {
               value={formData.instagram}
               onChange={handleChange}
               placeholder="Instagram URL"
+              className="w-full mb-4 p-2 border rounded-md"
+              required
+            />
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="Phone number"
               className="w-full mb-4 p-2 border rounded-md"
               required
             />

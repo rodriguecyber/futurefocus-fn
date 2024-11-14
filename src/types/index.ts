@@ -80,6 +80,7 @@ export interface TeamMember {
   role: {role:string};
   position: string;
   email: string;
+  phone:string
   instagram: string;
   isAdmin:boolean
 }

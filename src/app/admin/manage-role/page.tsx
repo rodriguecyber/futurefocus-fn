@@ -113,7 +113,7 @@ const ManageRolesPermissions: React.FC = () => {
      await axios.put(`${API_BASE_URL}/role/${selectedRole}`, {
        permissions: selectedPermissions,
      });
-     toast.success(`${selectedPermissions} assigned ${selectedRole}`)
+     toast.success(`permissions assigned ${selectedRole}`)
      fetchRoles();
    } catch (error) {
     toast.error('failed to assing permission')
@@ -125,7 +125,7 @@ const ManageRolesPermissions: React.FC = () => {
      await axios.put(`${API_BASE_URL}/others/role/${selectedUser}`, {
        role: selectedRole,
      });
-     toast.success(`$role assigned user`);
+     toast.success(`role assigned user`);
      fetchUsers();
    } catch (error) {
     toast.error('failed toassing role to user')
