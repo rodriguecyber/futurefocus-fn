@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { IUser } from "@/types";
 import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
-import { FaUser } from "react-icons/fa6";
+
 
 interface LayoutProps {
   children: ReactNode;
@@ -81,7 +81,7 @@ useEffect(() => {
                 Logout
               </button>
               <div className="flex flex-row gap-2 items-center">
-                <FaUser size={40}  className="bg-gray-500 rounded-full p-2"/>
+                <img src={userData?.image} className="bg-gray-500 rounded-full  w-10 h-10"/>
                 <span className="flex flex-col text-center">
                   <p className="hidden md:block ">{userData?.name}</p>
                   <p className="text-gray-600">{userData?.role.role}</p>

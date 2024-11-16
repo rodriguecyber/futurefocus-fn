@@ -108,7 +108,6 @@ const Footer = () => {
             </div>
           </div>
 
-        
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4">Donate</h1>
             <div className="grid grid-cols-2 gap-2 ">
@@ -130,7 +129,6 @@ const Footer = () => {
             </div>
           </div>
 
-        
           <div className="flex flex-col">
             <h1 className="text-lg font-semibold mb-4 text-center lg:text-left">
               Newsletter
@@ -162,6 +160,10 @@ const Footer = () => {
               Rodrigue
             </a>
           </p>
+          are you admin?{" "}
+          <a href="/admin/login" className="hover:text-black">
+            ADMIN
+          </a>
         </div>
       </div>
     </div>

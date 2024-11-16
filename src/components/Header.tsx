@@ -10,7 +10,7 @@ const Header = () => {
   setIsVisible(!isVisible)
   }
   return (
-    <div className="flex flex-col lg:flex-row lg:text-center lg:items-center justify-between lg:px-20 shadow-lg sticky top-0 z-50  bg-white">
+    <div className="flex flex-col bg-black lg:flex-row lg:text-center lg:items-center justify-between lg:px-20 shadow-lg sticky top-0 z-50  ">
       <span className="w-full lg:w-auto flex flex-row justify-between items-center px-7 lg:px-0">
         <img src="/logo.png" alt="our logo" className="w-24" />
         <a
@@ -32,21 +32,19 @@ const Header = () => {
         }`}
       >
         <div
-          className={`flex flex-col lg:flex-row gap-2 text-green-950 text-sm p-2 w-full lg:w-auto `}
+          className={`flex flex-col lg:flex-row gap-2 text-green-800 text-sm p-2 w-full lg:w-auto `}
         >
-          <a href="/" className="hover:text-black">
+          <a href="/" className="hover:text-white">
             HOME
           </a>
-          <a href="/about" className="hover:text-black">
+          <a href="/about" className="hover:text-white">
             ABOUT
           </a>
-          <a href="/contact" className="hover:text-black">
+          <a href="/contact" className="hover:text-white">
             CONTACT
           </a>
 
-          <a href="/admin/login" className="hover:text-black">
-            ADMIN
-          </a>
+         
         </div>
         <a
           href="/application"

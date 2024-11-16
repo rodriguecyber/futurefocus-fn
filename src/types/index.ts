@@ -34,6 +34,7 @@ export interface IUser {
   email: string;
   name: string;
   role: Role;
+  image:string
 }
 
 export interface Service {
