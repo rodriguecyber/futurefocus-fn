@@ -155,11 +155,12 @@ const Footer = () => {
             || Developer{" "}
             <a
               href="https://rwigara.vercel.app/about"
-              className="text-cyan-800"
+              className="text-cyan-800 mx-5" 
             >
               Rodrigue
             </a>
-            <a href="/admin/login" className="text-cyan-800">
+            ||
+            <a href="/admin/login" className="text-cyan-800 mx-5 ">
               ADMIN
             </a>
           </p>
