@@ -159,11 +159,10 @@ const Footer = () => {
             >
               Rodrigue
             </a>
+            <a href="/admin/login" className="text-cyan-800">
+              ADMIN
+            </a>
           </p>
-          are you admin?{" "}
-          <a href="/admin/login" className="hover:text-black">
-            ADMIN
-          </a>
         </div>
       </div>
     </div>

@@ -32,19 +32,17 @@ const Header = () => {
         }`}
       >
         <div
-          className={`flex flex-col lg:flex-row gap-2 text-green-800 text-sm p-2 w-full lg:w-auto `}
+          className={`flex flex-col lg:flex-row gap-2 text-white text-sm p-2 w-full lg:w-auto `}
         >
-          <a href="/" className="hover:text-white">
+          <a href="/" className="hover:text-green-800 font-extrabold">
             HOME
           </a>
-          <a href="/about" className="hover:text-white">
+          <a href="/about" className="hover:text-green-800 font-extrabold">
             ABOUT
           </a>
-          <a href="/contact" className="hover:text-white">
+          <a href="/contact" className="hover:text-green-800 font-extrabold">
             CONTACT
           </a>
-
-         
         </div>
         <a
           href="/application"
