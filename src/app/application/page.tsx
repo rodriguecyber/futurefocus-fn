@@ -156,13 +156,13 @@ const ApplicationForm: React.FC = () => {
         Back home
       </a>
       <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
-        Fill the Form Correctly
+        FILL OUT FORM CORRECTLT
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Full Name
+            <label className="block text-sm font-extrabold text-gray-700">
+              FULL NAME
             </label>
             <input
               type="text"
@@ -174,8 +174,8 @@ const ApplicationForm: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
+            <label className="block text-sm fontextrabold text-gray-700">
+              EMAIL
             </label>
             <input
               type="email"
@@ -188,8 +188,8 @@ const ApplicationForm: React.FC = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Phone
+          <label className="block text-sm fontextrabold text-gray-700">
+            PHONE
           </label>
           <input
             type="number"
@@ -201,8 +201,8 @@ const ApplicationForm: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Select a Course
+          <label className="block text-sm fontextrabold text-gray-700">
+            SELCT A COURSE
           </label>
           <select
             name="selectedCourse"
@@ -220,8 +220,8 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Select a Shift
+          <label className="block text-sm fontextrabold text-gray-700">
+            SELECT A SHIFT
           </label>
           <select
             name="selectedShift"
@@ -239,8 +239,8 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Select an Intake
+          <label className="block text-sm fontextrabold text-gray-700">
+            SELECT INTAKE
           </label>
           <select
             name="intake"
@@ -259,8 +259,8 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700">
-            Message
+          <label className="block text-sm fontextrabold text-gray-700">
+          MESSAGE
           </label>
           <textarea
             name="message"
@@ -274,9 +274,9 @@ const ApplicationForm: React.FC = () => {
         <div className="text-center">
           <button
             type="submit"
-            className="inline-flex justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            className="inline-flex justify-center px-4 py-2 border border-transparent text-sm font-extrabold rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            Submit Application
+            SUBMIT
           </button>
         </div>
       </form>
