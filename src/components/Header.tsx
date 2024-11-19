@@ -10,9 +10,9 @@ const Header = () => {
   setIsVisible(!isVisible)
   }
   return (
-    <div className="flex flex-col bg-blue-950 lg:flex-row lg:text-center lg:items-center justify-between lg:px-20 shadow-lg sticky top-0 z-50  ">
+    <div className="flex flex-col bg-black lg:flex-row lg:text-center lg:items-center justify-between lg:px-20 shadow-lg sticky top-0 z-50  ">
       <span className="w-full lg:w-auto flex flex-row justify-between items-center px-7 lg:px-0">
-        <img src="/logo.png" alt="our logo" className="w-24" />
+        <img src="/ffocus.png" alt="our logo" className="w-24" />
         <a
           href="/application"
           className="flex flex-row items-center gap-1 lg:hidden bg-green-900 p-2 text-white  lg:w-auto  "
