@@ -201,7 +201,7 @@ const ApplicationForm: React.FC = () => {
           />
         </div>
         <div>
-          <label className="block text-sm fontextrabold text-gray-700">
+          <label className="block text-sm font-extrabold text-gray-700">
             SELCT A COURSE
           </label>
           <select
@@ -220,7 +220,7 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm fontextrabold text-gray-700">
+          <label className="block text-sm font-extrabold text-gray-700">
             SELECT A SHIFT
           </label>
           <select
@@ -239,7 +239,7 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm fontextrabold text-gray-700">
+          <label className="block text-sm font-extrabold text-gray-700">
             SELECT INTAKE
           </label>
           <select
@@ -259,7 +259,7 @@ const ApplicationForm: React.FC = () => {
           </select>
         </div>
         <div>
-          <label className="block text-sm fontextrabold text-gray-700">
+          <label className="block text-sm font-extrabold text-gray-700">
           MESSAGE
           </label>
           <textarea
