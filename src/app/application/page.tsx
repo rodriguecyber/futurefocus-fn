@@ -16,7 +16,6 @@ interface ApplicationData {
   message: string;
 }
 
-// Define the shape of the intake data
 interface IntakeData {
   _id: string;
   intake: string;
@@ -156,7 +155,7 @@ const ApplicationForm: React.FC = () => {
         Back home
       </a>
       <h2 className="text-2xl font-bold mb-4 text-gray-900 text-center">
-        FILL OUT FORM CORRECTLY
+        FILL OUT THE FORM CORRECTLY
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -174,12 +173,13 @@ const ApplicationForm: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block text-sm fontextrabold text-gray-700">
+            <label className="block text-sm font-extrabold text-gray-700">
               EMAIL
             </label>
             <input
               type="email"
               name="email"
+              placeholder="test@gmail.com"
               value={formData.email}
               onChange={handleChange}
               required
@@ -188,7 +188,7 @@ const ApplicationForm: React.FC = () => {
           </div>
         </div>
         <div>
-          <label className="block text-sm fontextrabold text-gray-700">
+          <label className="block text-sm font-extrabold text-gray-700">
             PHONE
           </label>
           <input
