@@ -26,12 +26,12 @@ const projects: Project[] = [
   {
     image: "/ff-academy.png",
     title: "Future Focus Academy",
-    desc: "Future Focus Academy (FFA) is an African IT & Entertainment academy, one of the pillars of Future Focus Group. xFuture Focus Academy (FFA) offers scholarship in various fields such as Video Production & Filmmaking, Proffessional Photography, Graphic Design, Music & Audio Production, Software development, Mobile app development, Web development, Computer system... We also provide Internship in Multimedia, SOD...",
+    desc: "Future Focus Academy (FFA) is an African IT & Entertainment academy, one of the pillars of Future Focus Group. Future Focus Academy (FFA) offers scholarship in various fields such as Video Production & Filmmaking, Proffessional Photography, Graphic Design, Music & Audio Production, Software development, Mobile app development, Web development, Computer system... We also provide Internship in Multimedia, SOD...",
   },
   {
-    image: "/techup-logo1.png",
+    image: "/techups.png",
     title: "TechUp program",
-    desc: "Are you a university ned to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
+    desc: " Are you a university student studying Business Information Technology? The TechUp Program at Future Focus Academy offers a fully funded scholarship to help you master software development while gaining valuable teaching experience. This program is designed to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.",
   },
 ];
 

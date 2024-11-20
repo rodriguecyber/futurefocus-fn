@@ -6,11 +6,7 @@ const partnerLogos = [
     alt: "Future focus Academy",
     link: "https://futurefocus.co.rw",
   },
-  {
-    src: "/ppal.png",
-    alt: "ARTIST SUMMER PROMOTION ",
-    link: "https://aspromo.rw",
-  },
+ 
   {
     src: "/spen.png",
     alt: "CISA - Cybersecurity and Infrastructure Security Agency",
@@ -41,7 +37,7 @@ const PartnerLogos = () => {
   return (
     <div className="pt-10 mt-5 bg-[#232724]">
       <h1 className="text-gray-200 text-3xl font-bold text-center ">
-            OUR PARTENERS
+            OUR PARTNERS
       </h1>
       <div
         className={`flex  flex-wrap justify-center gap-4 p-6 ${
