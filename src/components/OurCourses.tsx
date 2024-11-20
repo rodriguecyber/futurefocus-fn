@@ -30,7 +30,7 @@ useEffect(() => {
 
   return (
     <div className="px-4 lg:px-10 py-8">
-      <h4 className="text-center text-xl text-cyan-600 mb-6">Our Courses</h4>
+      <h4 className="text-center text-xl text-cyan-600 mb-6">OUR COURSES</h4>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-5">
         {courses.map((course, index) => (
           <div

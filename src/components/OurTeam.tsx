@@ -27,7 +27,7 @@ const OurTeam = () => {
 
   return (
     <div className="text-center">
-      <h4 className="text-center text-xl text-cyan-600 mb-6">Meet Our Team</h4>
+      <h4 className="text-center text-xl text-cyan-600 mb-6">MEET OUR TEAM</h4>
       <div className="flex flex-wrap justify-center gap-6">
         {members.map((member) => (
           <div

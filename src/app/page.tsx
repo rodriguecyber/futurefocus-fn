@@ -48,15 +48,17 @@ export default function Home() {
       <Header />
       <ImageVideoSlider slides={slides} />
       <OurServices />
-      <WhyUs />
       <OurCourses />
+     <div className="px-10 my-4">
+      <img src="/study-abroad.gif" alt="sytudy abroad" />
+     </div>
       <h1 className="text-teal-500 text-xl text-center">
-       Our Videos
+       OUR VIDEOS
       </h1>
       <VideoGallery videos={videos} />
       <h1 className="text-teal-500 text-xl text-center">
         {" "}
-        Our Beats
+        OUR AUDIOS
       </h1>
       <VideoGallery videos={beat} />
       <Footer />
