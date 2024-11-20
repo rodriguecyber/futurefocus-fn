@@ -11,6 +11,7 @@ import axios from "axios";
 import { Project, Video } from "@/types";
 import VideoGallery from "@/components/YouTubeCarousel";
 import OurProjects from "@/components/Projects";
+import PartnerLogos from "@/components/Partners";
 
 export default function Home() {
   const [slides, setSlides] = useState<SlideItem[]>([]);
@@ -19,19 +20,19 @@ export default function Home() {
 const projects: Project[] = [
   {
     image:
-      "https://res.cloudinary.com/dcg62af7v/image/upload/v1718995830/samples/cloudinary-icon.png",
+      "/as-promo.png",
     title: "TechUp program",
     desc: "Are you a university student studying Business Information Technology? The TechUp Program at Future Focus Academy offers a fully funded scholarship to help you master software development while gaining valuable teaching experience.This program is designed to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
   },
   {
     image:
-      "https://res.cloudinary.com/dcg62af7v/image/upload/v1732093345/RODRIG_pcriks.jpg",
+      "/ff-academy.png",
     title: "TechUp program",
     desc: "Are you a university student studying Business Information Technology? The TechUp Program at Future Focus Academy offers a fully funded scholarship to help you master software development while gaining valuable teaching experience.This program is designed to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
   },
   {
     image:
-      "https://res.cloudinary.com/dcg62af7v/image/upload/v1732093345/RODRIG_pcriks.jpg",
+      "",
     title: "TechUp program",
     desc: "Are you a university ned to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
   },
@@ -84,6 +85,7 @@ const projects: Project[] = [
       <VideoGallery videos={beat} />
       <h1 className="text-teal-500 text-xl text-center"> OUR PROJECTS</h1>
       <OurProjects projects={projects} />
+      <PartnerLogos/>
       <Footer />
     </div>
   );

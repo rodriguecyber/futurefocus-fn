@@ -51,7 +51,7 @@ const OurProjects: React.FC<ProjectProps> = ({
         {startIndex > 0 && (
           <button
             onClick={prevSlide}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-yellow-500 rounded-full p-2 shadow-lg hover:bg-yellow-300 transition-colors duration-200"
+            className="absolute left-0 top-1/2   -translate-y-1/2 -translate-x-4 z-10 bg-yellow-500 rounded-full p-2 shadow-lg hover:bg-yellow-300 transition-colors duration-200"
             aria-label="Previous videos"
           >
             <ChevronLeft className="w-6 h-6" />
@@ -69,7 +69,7 @@ const OurProjects: React.FC<ProjectProps> = ({
         )}
 
         {/* Videos Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-300 ease-in-out">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4  transition-all duration-300 ease-in-out">
           {visibleProjects.map((project, index) => {
             return (
               <div

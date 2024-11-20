@@ -109,7 +109,7 @@ const Footer = () => {
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-lg font-semibold mb-4">Donate</h1>
+            <h1 className="text-lg font-semibold mb-4">PAY WITH</h1>
             <div className="grid grid-cols-2 gap-2 ">
               <a href="/">
                 <img src="/momo.png" alt="momo" className="w-full h-auto" />
