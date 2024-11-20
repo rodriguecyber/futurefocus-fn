@@ -15,14 +15,14 @@ const Header = () => {
         <img src="/ffocus.png" alt="our logo" className="w-24" />
         <a
           href="/application"
-          className="flex flex-row items-center gap-1 lg:hidden bg-yellow-500 p-2 text-white  lg:w-auto  "
+          className="flex flex-row items-center gap-1 rounded-md lg:hidden bg-yellow-500 p-2 text-white  lg:w-auto  "
         >
           <h1 className="text-sm">APPLY NOW</h1>
         </a>
         <FaBars
           width={32}
           id="bars"
-          className="lg:hidden"
+          className="lg:hidden text-white font-extrabold"
           onClick={toggleVisisbility}
         />
       </span>

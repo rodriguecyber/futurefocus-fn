@@ -19,26 +19,17 @@ export default function Home() {
   const [beat, setBeat] = useState<Video[]>([]);
 const projects: Project[] = [
   {
-    image:
-      "/as-promo.png",
-    title: "TechUp program",
-    desc: "Are you a university student studying Business Information Technology? The TechUp Program at Future Focus Academy offers a fully funded scholarship to help you master software development while gaining valuable teaching experience.This program is designed to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
+    image: "/as-promo.png",
+    title: "Artist Summer Promotion",
+    desc: " AS PROMO (Artist Summer Promotion) Is an international annual talent competition that aims to detect, highlight and promote the talents of various emerging artists. Every year, the artist summer promotion competition (ASPROMO) highlights different talents in different categories including singing, dancing, poetry...",
   },
   {
-    image:
-      "/ff-academy.png",
-    title: "TechUp program",
-    desc: "Are you a university student studying Business Information Technology? The TechUp Program at Future Focus Academy offers a fully funded scholarship to help you master software development while gaining valuable teaching experience.This program is designed to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
+    image: "/ff-academy.png",
+    title: "Future Focus Academy",
+    desc: "Future Focus Academy (FFA) is an African IT & Entertainment academy, one of the pillars of Future Focus Group. xFuture Focus Academy (FFA) offers scholarship in various fields such as Video Production & Filmmaking, Proffessional Photography, Graphic Design, Music & Audio Production, Software development, Mobile app development, Web development, Computer system... We also provide Internship in Multimedia, SOD...",
   },
   {
-    image:
-      "",
-    title: "TechUp program",
-    desc: "Are you a university ned to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
-  },
-  {
-    image:
-      "https://res.cloudinary.com/dcg62af7v/image/upload/v1732093345/RODRIG_pcriks.jpg",
+    image: "/techup-logo1.png",
     title: "TechUp program",
     desc: "Are you a university ned to equip you with in-demand skills through hands-on training, real-world projects, and mentorship from industry experts. You’ll also learn how to teach software development, opening doors to career opportunities in both development and education.Don’t miss this chance to enhance your skills, boost your resume, and become part of a vibrant, supportive tech community",
   },

@@ -74,21 +74,21 @@ const OurProjects: React.FC<ProjectProps> = ({
             return (
               <div
                 key={`${project.title}-${index}`}
-                className="flex flex-col transition-transform duration-300 "
+                className="flex flex-col transition-transform duration-300 border-solid border-[#c4b9b9] border-[0.0000001px] rounded-md "
               >
                 <img
                   height={10}
-                  className="h-1/2 mx-auto"
+                  className="h-2/3 mx-auto"
                   src={project.image}
                   alt={project.title}
                 />
                 <div
                   className=" relative
-                from-gray-900 via-gray-800 to-transparent p-4 h-72 overflow-auto"
+                from-gray-900 via-gray-800 to-transparent px-4 h-72 overflow-auto"
                 >
                   <h2 className="text-lg font-bold">{project.title}</h2>
                   <p className="text-sm text-gray-400 ">{project.desc}</p>
-                  <button className="absolute bottom-0 text-green-700 hover:text-green-900 font-extrabold left-2 ">
+                  <button className="bottom-0 text-green-700 hover:text-green-900 font-extrabold left-2 ">
                     Read More
                   </button>
                 </div>
