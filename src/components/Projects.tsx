@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { Video } from "@/types";
+import type { Project } from "@/types";
 
-interface VideoGalleryProps {
-  videos: Video[];
+interface ProjectProps {
+  projects: Project[];
   isLoading?: boolean;
 }
 
-const VideoGallery: React.FC<VideoGalleryProps> = ({
-  videos,
+const OurProjects: React.FC<ProjectProps> = ({
+  projects,
   isLoading = false,
 }) => {
-  const [randomVideos, setRandomVideos] = useState<Video[]>([]);
+  const [randomProjects, setRandomProject] = useState<Project[]>([]);
   const [startIndex, setStartIndex] = useState(0);
 
   useEffect(() => {
-    if (videos.length > 0) {
+    if (projects.length > 0) {
       // Create a copy and shuffle the videos array
-      const shuffled = [...videos];
+      const shuffled = [...projects];
       for (let i = shuffled.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      setRandomVideos(shuffled);
+      setRandomProject(shuffled);
     }
-  }, [videos]);
+  }, [projects]);
 
   const nextSlide = () => {
-    if (startIndex + 3 < randomVideos.length) {
+    if (startIndex + 3 < randomProjects.length) {
       setStartIndex((prev) => prev + 1);
     }
   };
@@ -38,11 +38,11 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
     }
   };
 
-  if (isLoading || videos.length === 0) {
+  if (isLoading || projects.length === 0) {
     return <div className="w-full h-[400px] bg-gray-100 animate-pulse" />;
   }
 
-  const visibleVideos = randomVideos.slice(startIndex, startIndex + 3);
+  const visibleProjects= randomProjects.slice(startIndex, startIndex + 3);
 
   return (
     <div className="w-full mx-auto  px-10 py-4">
@@ -58,7 +58,7 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
           </button>
         )}
 
-        {startIndex + 3 < randomVideos.length && (
+        {startIndex + 3 < randomProjects.length && (
           <button
             onClick={nextSlide}
             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-yellow-500 rounded-full p-2 shadow-lg hover:bg-yellow-300 transition-colors duration-200"
@@ -70,30 +70,37 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
 
         {/* Videos Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 transition-all duration-300 ease-in-out">
-          {visibleVideos.map((video, index) => {
-            const videoId = new URL(video.url).searchParams.get("v");
+          {visibleProjects.map((project, index) => {
             return (
               <div
-                key={`${videoId}-${index}`}
-                className="w-full aspect-video transition-transform duration-300"
+                key={`${project.title}-${index}`}
+                className="flex flex-col transition-transform duration-300 "
               >
-                <iframe
-                  className="w-full h-full rounded-lg shadow-lg"
-                  src={`https://www.youtube.com/embed/${videoId}`}
-                  title={`Video ${startIndex + index + 1}`}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
+                <img
+                  height={10}
+                  className="h-1/2 mx-auto"
+                  src={project.image}
+                  alt={project.title}
                 />
+                <div
+                  className=" relative
+                from-gray-900 via-gray-800 to-transparent p-4 h-72 overflow-auto"
+                >
+                  <h2 className="text-lg font-bold">{project.title}</h2>
+                  <p className="text-sm text-gray-400 ">{project.desc}</p>
+                  <button className="absolute bottom-0 text-green-700 hover:text-green-900 font-extrabold left-2 ">
+                    Read More
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
 
         {/* Progress Indicators */}
-        {randomVideos.length > 3 && (
+        {randomProjects.length > 3 && (
           <div className="flex justify-center mt-4 gap-2">
-            {Array.from({ length: Math.ceil(randomVideos.length / 3) }).map(
+            {Array.from({ length: Math.ceil(randomProjects.length / 3) }).map(
               (_, idx) => (
                 <button
                   key={idx}
@@ -121,4 +128,4 @@ const VideoGallery: React.FC<VideoGalleryProps> = ({
   );
 };
 
-export default VideoGallery;
+export default OurProjects;

@@ -9,6 +9,12 @@ export interface Video {
   title: string;
   type: string;
 }
+export interface Project {
+  image: string;
+  title: string;
+  desc: string;
+}
+
 export interface Feature {
   _id: string;
   feature: string;
