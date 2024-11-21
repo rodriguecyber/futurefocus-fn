@@ -53,9 +53,7 @@ useEffect(() => {
               <Link href="/admin/intakes" className="nav-link">
                 Intakes
               </Link>
-              <Link href="/admin/manage-role" className="nav-link">
-                Roles
-              </Link>
+    
               <Link
                 href="https://student.futurefocus.co.rw/"
                 className="text-green-700"

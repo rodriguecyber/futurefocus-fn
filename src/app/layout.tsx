@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import AuthContextAPI from "@/context/AuthContext";
 import "./globals.css";
+import WhatsAppButton from "@/components/WhatsApp";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,8 +22,10 @@ const RootLayout: React.FC<LayoutProps> = ({ children }) => {
     <html lang="en">
       <body>
         <AuthContextAPI>
-              <main>{children}</main>
-          
+          <main>
+            <WhatsAppButton />
+            {children}
+          </main>
         </AuthContextAPI>
       </body>
     </html>
