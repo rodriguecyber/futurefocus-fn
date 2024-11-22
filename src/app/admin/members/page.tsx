@@ -23,7 +23,8 @@ const MembersPage: React.FC = () => {
   const [userData, setUserData] = useState<IUser | null>(null);
 
   // New state to handle toggles for each member
-  const [toggles, setToggles] = useState<{ [key: string]: boolean }>({});
+  const [togglesAdmin, setTogglesAdmin] = useState<{ [key: string]: boolean }>({});
+  const [togglesAttedance, setTogglesAttendance] = useState<{ [key: string]: boolean }>({});
 
   const [formData, setFormData] = useState({
     _id: "",
@@ -47,11 +48,14 @@ const MembersPage: React.FC = () => {
         setUserData(getLoggedUserData());
 
         // Initialize toggles for each member
-        const initialToggles: { [key: string]: boolean } = {};
+        const initialTogglesAdmin: { [key: string]: boolean } = {};
+        const initialTogglesAttendance: { [key: string]: boolean } = {};
         teamMembers.forEach((member) => {
-          initialToggles[member._id] = member.isAdmin; // Set default toggle state
+          initialTogglesAdmin[member._id] = member.isAdmin; // Set default toggle state
+          initialTogglesAttendance[member._id] = member.active; // Set default toggle state
         });
-        setToggles(initialToggles);
+        setTogglesAdmin(initialTogglesAdmin);
+        setTogglesAttendance(initialTogglesAttendance);
       } catch (error) {
         toast.error("Failed to fetch team data");
       } finally {
@@ -100,20 +104,37 @@ const MembersPage: React.FC = () => {
       await deleteTeamMember(id);
       setMembers(members.filter((member) => member._id !== id));
       toast.success("Member deleted successfully");
-      const { [id]: _, ...remainingToggles } = toggles;
-      setToggles(remainingToggles);
+      const { [id]: _, ...remainingTogglesAdmin } = togglesAdmin;
+      const { [id]: p, ...remainingTogglesAttendance } = togglesAttedance;
+      setTogglesAdmin(remainingTogglesAdmin);
+      setTogglesAttendance(remainingTogglesAttendance);
     } catch (error) {
       toast.error("Failed to delete member");
     }
   };
 
-  const handleToggle = async(id: string) => {
+  const handleToggleAttend = async(id: string) => {
     try {
-      await axios.put(`${API_BASE_URL}/member/toogle-admin/${id}`);
-      setToggles((prev) => ({
+      await axios.put(`${API_BASE_URL}/member/toogle-attendance/${id}`);
+      setTogglesAttendance((prev) => ({
         ...prev,
         [id]: !prev[id],
       }));
+     toast.success("switched succsfully"); 
+
+    } catch (error) {
+     toast.error('failed to switch') 
+    }
+  };
+  const handleToggleAdmin = async(id: string) => {
+    try {
+      await axios.put(`${API_BASE_URL}/member/toogle-admin/${id}`);
+      setTogglesAdmin((prev) => ({
+        ...prev,
+        [id]: !prev[id],
+      }));
+     toast.success("switched succsfully"); 
+
     } catch (error) {
      toast.error('failed to switch') 
     }
@@ -137,14 +158,14 @@ const MembersPage: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <div className="p-4">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-2xl font-semibold">Team Members</h1>
+     <Layout>
+      <div className="p-2 md:p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+          <h1 className="text-xl md:text-2xl font-semibold">Team Members</h1>
           <button
             disabled={!hasPermission(userData as IUser, "team", "create")}
             onClick={() => setIsAddModalOpen(true)}
-            className={`px-4 py-2 ${
+            className={`w-full sm:w-auto px-4 py-2 ${
               !hasPermission(userData as IUser, "team", "create")
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-blue-600"
@@ -153,6 +174,7 @@ const MembersPage: React.FC = () => {
             Add Member
           </button>
         </div>
+
         {isLoading ? (
           <div className="text-center py-10">
             <div className="loader">Loading...</div>
@@ -162,46 +184,78 @@ const MembersPage: React.FC = () => {
             {members.map((member) => (
               <div
                 key={member._id}
-                className="flex items-center p-4 border flex-row rounded-lg shadow-md bg-white"
+                className="flex flex-col  md:flex-row md:justify-between   items-center p-3 md:p-4 border  rounded-lg shadow-md bg-white "
               >
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-24 h-24 rounded-full object-cover mr-4"
-                />
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold mb-1">{member.name}</h3>
-                  <p className="text-gray-700 mb-1">{member.position}</p>
+                <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover"
+                  />
+                  <div className="text-center sm:text-left">
+                    <h3 className="text-lg md:text-xl font-bold mb-1">{member.name}</h3>
+                    <p className="text-gray-700 mb-1">{member.position}</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id={member._id}
-                      className="toggle-checkbox hidden"
-                      checked={toggles[member._id] || false}
-                      onChange={() => handleToggle(member._id)}
-                    />
-                    <div
-                      onClick={() => handleToggle(member._id)}
-                      className={`toggle-container w-16 h-8 rounded-full flex items-center p-1 cursor-pointer ${
-                        toggles[member._id] ? "bg-blue-500" : "bg-gray-300"
-                      }`}
-                    >
-                      <div
-                        className={`toggle-circle w-6 h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
-                          toggles[member._id] ? "translate-x-8" : ""
-                        }`}
-                      />
+
+                <div className="flex flex-col md:flex-row gap-4  sm:ml-auto">
+                  <div className="flex flex-col gap-4 w-full md:w-auto">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="font-bold text-sm md:text-base">ATTENDANCE:</p>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`attendance-${member._id}`}
+                          className="toggle-checkbox hidden"
+                          checked={togglesAttedance[member._id] || false}
+                          onChange={() => handleToggleAttend(member._id)}
+                        />
+                        <div
+                          onClick={() => handleToggleAttend(member._id)}
+                          className={`toggle-container w-12 md:w-16 h-6 md:h-8 rounded-full flex items-center p-1 cursor-pointer ${
+                            togglesAttedance[member._id] ? "bg-blue-500" : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`toggle-circle w-5 h-5 md:w-6 md:h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                              togglesAttedance[member._id] ? "translate-x-6 md:translate-x-8" : ""
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between md:gap-4">
+                      <p className="font-bold text-sm md:text-base">ADMIN:</p>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`admin-${member._id}`}
+                          className="toggle-checkbox hidden"
+                          checked={togglesAdmin[member._id] || false}
+                          onChange={() => handleToggleAdmin(member._id)}
+                        />
+                        <div
+                          onClick={() => handleToggleAdmin(member._id)}
+                          className={`toggle-container w-12 md:w-16 h-6 md:h-8 rounded-full flex items-center p-1 cursor-pointer ${
+                            togglesAdmin[member._id] ? "bg-blue-500" : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`toggle-circle w-5 h-5 md:w-6 md:h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                              togglesAdmin[member._id] ? "translate-x-6 md:translate-x-8" : ""
+                            }`}
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex mt-2 flex-col gap-2">
+
+                  <div className="flex flex-row md:flex-col justify-center gap-2 w-full md:w-auto">
                     <button
-                      disabled={
-                        !hasPermission(userData as IUser, "team", "update")
-                      }
+                      disabled={!hasPermission(userData as IUser, "team", "update")}
                       onClick={() => handleEdit(member)}
-                      className={`px-4 py-2 ${
+                      className={`flex-1 md:flex-none px-4 py-2 text-sm md:text-base ${
                         !hasPermission(userData as IUser, "team", "update")
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-green-600"
@@ -210,11 +264,9 @@ const MembersPage: React.FC = () => {
                       Edit
                     </button>
                     <button
-                      disabled={
-                        !hasPermission(userData as IUser, "team", "delete")
-                      }
+                      disabled={!hasPermission(userData as IUser, "team", "delete")}
                       onClick={() => handleDelete(member._id)}
-                      className={`px-4 py-2 ${
+                      className={`flex-1 md:flex-none px-4 py-2 text-sm md:text-base ${
                         !hasPermission(userData as IUser, "team", "delete")
                           ? "bg-gray-400 cursor-not-allowed"
                           : "bg-red-600"
@@ -228,21 +280,19 @@ const MembersPage: React.FC = () => {
             ))}
           </div>
         )}
-        <Modal
-          isOpen={isAddModalOpen || isUpdateModalOpen}
-          onClose={closeModal}
-        >
-          <h2 className="text-xl font-bold mb-4">
+
+        <Modal isOpen={isAddModalOpen || isUpdateModalOpen} onClose={closeModal}>
+          <h2 className="text-lg md:text-xl font-bold mb-4">
             {editingMember ? "Edit Member" : "Add New Member"}
           </h2>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} className="space-y-3">
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="Name"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <input
@@ -251,7 +301,7 @@ const MembersPage: React.FC = () => {
               value={formData.image}
               onChange={handleChange}
               placeholder="Image URL"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <input
@@ -260,7 +310,7 @@ const MembersPage: React.FC = () => {
               value={formData.position}
               onChange={handleChange}
               placeholder="Position"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <input
@@ -269,7 +319,7 @@ const MembersPage: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <input
@@ -278,7 +328,7 @@ const MembersPage: React.FC = () => {
               value={formData.instagram}
               onChange={handleChange}
               placeholder="Instagram URL"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <input
@@ -287,12 +337,12 @@ const MembersPage: React.FC = () => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="Phone number"
-              className="w-full mb-4 p-2 border rounded-md"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
             <button
               type="submit"
-              className="w-full py-2 bg-blue-600 text-white rounded-md"
+              className="w-full py-2 bg-blue-600 text-white rounded-md text-sm md:text-base"
             >
               {editingMember ? "Update Member" : "Add Member"}
             </button>
@@ -302,6 +352,7 @@ const MembersPage: React.FC = () => {
     </Layout>
   );
 };
+  
 
 const Modal: React.FC<{
   isOpen: boolean;

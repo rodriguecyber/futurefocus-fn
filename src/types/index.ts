@@ -83,6 +83,7 @@ export interface IRole {
 export interface TeamMember {
   _id: string;
   name: string;
+  active:boolean
   image: string;
   role: {role:string};
   position: string;
