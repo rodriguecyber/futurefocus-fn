@@ -15,9 +15,12 @@ import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
 import { IUser } from "@/types";
 import { hasPermission } from "@/config/hasPermission";
 import { toast } from "react-toastify";
+import axios from "axios";
+import API_BASE_URL from "@/config/baseURL";
 
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
+  const [shifts, setShifts] = useState<{_id:string,start:string,end:string}[]>([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -44,8 +47,20 @@ const CoursesComponent: React.FC = () => {
         setLoading(false);
       }
     };
+    const getIntakes = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/others/shift`);
+        setShifts(response.data.shifts);
+        await fetchUser();
+        setUserData(await getLoggedUserData());
+        console.log(userData);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     fetchCourses();
+    getIntakes()
   }, []);
 
   const handleAddSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,7 +68,6 @@ const CoursesComponent: React.FC = () => {
     const formData = new FormData(e.currentTarget);
     const newCourse: Course = {
       title: formData.get("title") as string,
-      // description: formData.get("description") as string,
       rating: Number(formData.get("rating")),
       image: formData.get("image") as string,
       scholarship: Number(formData.get("scholarship")),
@@ -81,7 +95,6 @@ const CoursesComponent: React.FC = () => {
     const updatedCourse: Course = {
       ...editingCourse,
       title: formData.get("title") as string,
-      // description: formData.get("description") as string,
       rating: Number(formData.get("rating")),
       image: formData.get("image") as string,
       scholarship: Number(formData.get("scholarship")),
@@ -175,7 +188,9 @@ const CoursesComponent: React.FC = () => {
                       </span>
                     </div>
                     <span
-                      className={`${course.active ? "text-green-500" : "text-red-600"}`}
+                      className={`${
+                        course.active ? "text-green-500" : "text-red-600"
+                      }`}
                     >
                       {course.active ? "Active" : "Disactive"}
                     </span>
@@ -263,12 +278,20 @@ const CoursesComponent: React.FC = () => {
               required
               className="mb-2 w-full px-3 py-2 border rounded"
             />
-            <input
-              type="text"
-              name="shifts"
-              placeholder="Shifts (comma separated)"
-              className="mb-2 w-full px-3 py-2 border rounded"
-            />
+            <div className="mb-2 w-full px-3 py-2 border rounded">
+              {shifts.map((shift) => (
+                <div className="flex  gap-2">
+                  <input
+                    value={shift._id}
+                    name="shifts"
+                    type="checkbox"
+                  />
+                  <p>
+                    {shift.start} - {shift.end}
+                  </p>
+                </div>
+              ))}
+            </div>
             <button
               type="submit"
               className="w-full bg-blue-500 text-white px-4 py-2 rounded"
@@ -292,13 +315,7 @@ const CoursesComponent: React.FC = () => {
               required
               className="mb-2 w-full px-3 py-2 border rounded"
             />
-            {/* <input
-              type="text"
-              name="description"
-              defaultValue={editingCourse?.description}
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-            /> */}
+
             <label htmlFor="title">Rating</label>
 
             <input
@@ -353,12 +370,21 @@ const CoursesComponent: React.FC = () => {
             </select>
             <label htmlFor="titel">Shift separated by comma</label>
 
-            <textarea
-              name="shifts"
-              defaultValue={editingCourse?.shifts.join(", ")}
-              className="mb-2 w-full px-3 py-2 border rounded"
-              placeholder={editingCourse?.rating ? "shifts" : ""}
-            />
+            <div className="mb-2 w-full px-3 py-2 border rounded">
+              {shifts.map((shift) => (
+                <div className="flex  gap-2">
+                  <input
+                    value={shift._id}
+                    name="shifts"
+                    checked={editingCourse?.shifts?.includes(shift._id)}
+                    type="checkbox"
+                  />
+                  <p>
+                    {shift.start} - {shift.end}
+                  </p>
+                </div>
+              ))}
+            </div>
             <button
               type="submit"
               className="w-full bg-blue-500 text-white px-4 py-2 rounded"
