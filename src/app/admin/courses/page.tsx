@@ -17,6 +17,7 @@ import { hasPermission } from "@/config/hasPermission";
 import { toast } from "react-toastify";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
+import { ShieldAlert } from "lucide-react";
 
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
@@ -280,7 +281,7 @@ const CoursesComponent: React.FC = () => {
             />
             <div className="mb-2 w-full px-3 py-2 border rounded">
               {shifts.map((shift) => (
-                <div className="flex  gap-2">
+                <div key={shift._id} className="flex  gap-2">
                   <input
                     value={shift._id}
                     name="shifts"
@@ -372,7 +373,7 @@ const CoursesComponent: React.FC = () => {
 
             <div className="mb-2 w-full px-3 py-2 border rounded">
               {shifts.map((shift) => (
-                <div className="flex  gap-2">
+                <div key={shift._id} className="flex  gap-2">
                   <input
                     value={shift._id}
                     name="shifts"
