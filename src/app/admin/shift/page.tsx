@@ -9,7 +9,7 @@ import { fetchUser, getLoggedUserData } from "@/context/adminAuth";
 import { hasPermission } from "@/config/hasPermission";
 
 const Shift = () => {
-  const [shift, setShift] = useState({start:"",end:""});
+  const [shift, setShift] = useState({start:"",end:"",name:"", days:[]});
   const [shifts, setShifts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -29,7 +29,7 @@ const Shift = () => {
     try {
       setDeletingId(id);
       const response = await axios.delete(
-        `${API_BASE_URL}/others/intake/${id}`
+        `${API_BASE_URL}/others/shift/${id}`
       );
       await getIntakes();
       toast.success(response.data.message);
@@ -60,7 +60,9 @@ const Shift = () => {
       setIsSubmitting(true);
       const response = await axios.post(`${API_BASE_URL}/others/shift`, {
         start:shift.start,
-        end:shift.end
+        end:shift.end,
+        name:shift.name,
+        days:shift.days
       });
       toast.success(response.data.message);
       await getIntakes();
@@ -98,6 +100,26 @@ const Shift = () => {
                   className="w-1/2"
                   type="time"
                   name="end"
+                  id=""
+                  onChange={handleChange}
+                />
+              </span>
+              <span className="flex gap-2 ">
+                <p className="w-1/2">Name:</p>
+                <input
+                  className="w-1/2"
+                  type="text"
+                  name="name"
+                  id=""
+                  onChange={handleChange}
+                />
+              </span>
+              <span className="flex gap-2 ">
+                <p className="w-1/2">days:</p>
+                <input
+                  className="w-1/2"
+                  type="text"
+                  name="days"
                   id=""
                   onChange={handleChange}
                 />

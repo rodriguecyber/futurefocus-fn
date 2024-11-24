@@ -213,7 +213,7 @@ const ApplicationForm: React.FC = () => {
             {courses
               .filter((course) => course.active)
               .map((course) => (
-                <option key={course.title} value={course.title}>
+                <option key={course.title} value={course._id}>
                   {course.title}
                 </option>
               ))}
