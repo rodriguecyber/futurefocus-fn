@@ -10,7 +10,7 @@ export interface Course {
   image: string;
   scholarship: number;
   nonScholarship: number;
-  shifts: string[];
+  shifts: {_id:string,name:string}[];
 }
 
 

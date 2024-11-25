@@ -46,7 +46,7 @@ const ApplicationForm: React.FC = () => {
           setFormData((prevData) => ({
             ...prevData,
             selectedCourse: response.data[0].title,
-            selectedShift: response.data[0].shifts[0],
+            selectedShift: response.data[0].shifts[0]._id,
           }));
         }
         setLoading(false);
@@ -91,7 +91,7 @@ const ApplicationForm: React.FC = () => {
       if (selectedCourse) {
         setFormData((prevData) => ({
           ...prevData,
-          selectedShift: selectedCourse.shifts[0],
+          selectedShift: selectedCourse.shifts[0]._id,
         }));
       }
     }
@@ -122,7 +122,7 @@ const ApplicationForm: React.FC = () => {
         email: "",
         phone: "",
         selectedCourse: courses.length > 0 ? courses[0].title : "",
-        selectedShift: courses.length > 0 ? courses[0].shifts[0] : "",
+        selectedShift: courses.length > 0 ? courses[0].shifts[0]._id : "",
         message: "",
         intake: intakes.length > 0 ? intakes[0].intake : "",
       });
@@ -232,8 +232,8 @@ const ApplicationForm: React.FC = () => {
             {courses
               .find((course) => course.title === formData.selectedCourse)
               ?.shifts.map((shift) => (
-                <option key={shift} value={shift}>
-                  {shift}
+                <option key={shift._id} value={shift._id}>
+                  {shift.name}
                 </option>
               ))}
           </select>

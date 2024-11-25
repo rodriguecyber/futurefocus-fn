@@ -73,6 +73,7 @@ const CoursesComponent: React.FC = () => {
       image: formData.get("image") as string,
       scholarship: Number(formData.get("scholarship")),
       nonScholarship: Number(formData.get("nonScholarship")),
+      //@ts-expect-error error
       shifts: formData.get("shifts")?.toString().split(",") || [],
       active: false
     };
@@ -377,6 +378,7 @@ const CoursesComponent: React.FC = () => {
                   <input
                     value={shift._id}
                     name="shifts"
+                    //@ts-expect-error
                     checked={editingCourse?.shifts?.includes(shift._id)}
                     type="checkbox"
                   />

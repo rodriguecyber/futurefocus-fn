@@ -30,8 +30,8 @@ const OurTeam = () => {
       <h4 className="text-center text-xl text-cyan-600 mb-6">MEET OUR TEAM</h4>
       <div className="flex flex-wrap justify-center gap-6">
         {members.map((member) => (
-          <div
-            key={member._id} // Use member._id as the unique key
+          member.active?(<div
+            key={member._id} 
             className="flex flex-col items-center bg-white rounded-lg overflow-hidden shadow-md w-full sm:w-1/2 md:w-1/3 lg:w-1/5 p-4 hover:border-black hover:border-2"
           >
             <div className="relative w-full">
@@ -53,7 +53,7 @@ const OurTeam = () => {
               <h1 className="text-lg font-semibold">{member.name}</h1>
               <p className="text-gray-500">{member.position}</p>
             </div>
-          </div>
+          </div>):""
         ))}
       </div>
     </div>
