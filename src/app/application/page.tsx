@@ -233,7 +233,7 @@ const ApplicationForm: React.FC = () => {
               .find((course) => course._id === formData.selectedCourse)
               ?.shifts.map((shift) => (
                 <option key={shift._id} value={shift._id}>
-                  {shift.name}
+                 {shift.name}{' '} {shift.start}{' - '}{shift.end}
                 </option>
               ))}
           </select>
