@@ -46,7 +46,7 @@ const ApplicationForm: React.FC = () => {
           setFormData((prevData) => ({
             ...prevData,
             selectedCourse: response.data[0].title,
-            selectedShift: response.data[0].shifts[0]._id,
+            selectedShift: response.data[0].shifts[0]?._id,
           }));
         }
         setLoading(false);
