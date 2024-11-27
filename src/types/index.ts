@@ -84,6 +84,7 @@ export interface TeamMember {
   _id: string;
   name: string;
   active:boolean
+  attend:boolean
   image: string;
   role: {role:string};
   position: string;

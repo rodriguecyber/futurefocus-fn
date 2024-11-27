@@ -25,6 +25,7 @@ const MembersPage: React.FC = () => {
   // New state to handle toggles for each member
   const [togglesAdmin, setTogglesAdmin] = useState<{ [key: string]: boolean }>({});
   const [togglesAttedance, setTogglesAttendance] = useState<{ [key: string]: boolean }>({});
+  const [togglesActive, setTogglesActive] = useState<{ [key: string]: boolean }>({});
 
   const [formData, setFormData] = useState({
     _id: "",
@@ -50,12 +51,15 @@ const MembersPage: React.FC = () => {
         // Initialize toggles for each member
         const initialTogglesAdmin: { [key: string]: boolean } = {};
         const initialTogglesAttendance: { [key: string]: boolean } = {};
+        const initialTogglesActive: { [key: string]: boolean } = {};
         teamMembers.forEach((member) => {
           initialTogglesAdmin[member._id] = member.isAdmin; // Set default toggle state
-          initialTogglesAttendance[member._id] = member.active; // Set default toggle state
+          initialTogglesAttendance[member._id] = member.attend; // Set default toggle state
+          initialTogglesActive[member._id] = member.active; // Set default toggle state
         });
         setTogglesAdmin(initialTogglesAdmin);
         setTogglesAttendance(initialTogglesAttendance);
+        setTogglesActive(initialTogglesActive);
       } catch (error) {
         toast.error("Failed to fetch team data");
       } finally {
@@ -117,6 +121,19 @@ const MembersPage: React.FC = () => {
     try {
       await axios.put(`${API_BASE_URL}/member/toogle-attendance/${id}`);
       setTogglesAttendance((prev) => ({
+        ...prev,
+        [id]: !prev[id],
+      }));
+     toast.success("switched succsfully"); 
+
+    } catch (error) {
+     toast.error('failed to switch') 
+    }
+  };
+  const handleToggleActive = async(id: string) => {
+    try {
+      await axios.put(`${API_BASE_URL}/member/toogle-active/${id}`);
+      setTogglesActive((prev) => ({
         ...prev,
         [id]: !prev[id],
       }));
@@ -219,6 +236,30 @@ const MembersPage: React.FC = () => {
                           <div
                             className={`toggle-circle w-5 h-5 md:w-6 md:h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
                               togglesAttedance[member._id] ? "translate-x-6 md:translate-x-8" : ""
+                            }`}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="font-bold text-sm md:text-base">ACTIVE:</p>
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`active-${member._id}`}
+                          className="toggle-checkbox hidden"
+                          checked={togglesActive[member._id] || false}
+                          onChange={() => handleToggleActive(member._id)}
+                        />
+                        <div
+                          onClick={() => handleToggleActive(member._id)}
+                          className={`toggle-container w-12 md:w-16 h-6 md:h-8 rounded-full flex items-center p-1 cursor-pointer ${
+                            togglesActive[member._id] ? "bg-blue-500" : "bg-gray-300"
+                          }`}
+                        >
+                          <div
+                            className={`toggle-circle w-5 h-5 md:w-6 md:h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                              togglesActive[member._id] ? "translate-x-6 md:translate-x-8" : ""
                             }`}
                           />
                         </div>

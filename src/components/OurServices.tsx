@@ -34,7 +34,7 @@ const renderIcon = (iconName: string) => {
    try {
      const response = await axios.get(`${API_BASE_URL}/service`);
      setServices(response.data);
-     setError(null); // Clear error if fetch is successful
+     setError(null); 
    } catch (error) {
      console.error("Error fetching services", error);
      setError("Failed to fetch services. Please try again.");
