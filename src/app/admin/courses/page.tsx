@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from "react";
 import Modal from "@/components/Model";
 import {
-  Course,
   getCourses,
   addCourse,
   updateCourse,
   deleteCourse,
+  Course,
 } from "../../../context/courseContext";
 import withAdminAuth from "@/components/withAdminAuth";
 import Layout from "../Layout";
@@ -17,17 +17,28 @@ import { hasPermission } from "@/config/hasPermission";
 import { toast } from "react-toastify";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
-import { ShieldAlert } from "lucide-react";
+
 
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
-  const [shifts, setShifts] = useState<{_id:string,start:string,end:string}[]>([]);
+  const [shifts, setShifts] = useState<
+    { _id: string; start: string; end: string }[]
+  >([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<IUser | null>(null);
 
+  // State for controlled form inputs
+  const [formData, setFormData] = useState({
+    title: "",
+    rating: 1,
+    image: "",
+    scholarship: 0,
+    nonScholarship: 0,
+    shifts: [] as string[], // Store shift IDs
+  });
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -38,9 +49,10 @@ const CoursesComponent: React.FC = () => {
         } else {
           console.error("Unexpected data format:", response.data);
           setCourses([]);
+          
         }
-        await fetchUser()
-        setUserData(await getLoggedUserData())
+        await fetchUser();
+        setUserData(await getLoggedUserData());
       } catch (error) {
         console.error("Error fetching courses", error);
         setCourses([]);
@@ -48,44 +60,57 @@ const CoursesComponent: React.FC = () => {
         setLoading(false);
       }
     };
-    const getIntakes = async () => {
+
+    const getShifts = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/others/shift`);
         setShifts(response.data.shifts);
-        await fetchUser();
-        setUserData(await getLoggedUserData());
-        console.log(userData);
       } catch (error) {
         console.log(error);
       }
     };
 
     fetchCourses();
-    getIntakes()
+    getShifts();
   }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleShiftChange = (shiftId: string) => {
+    setFormData((prevData) => {
+      const newShifts = prevData.shifts.includes(shiftId)
+        ? prevData.shifts.filter((id) => id !== shiftId)
+        : [...prevData.shifts, shiftId];
+      return { ...prevData, shifts: newShifts };
+    });
+  };
 
   const handleAddSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const newCourse: Course = {
-      title: formData.get("title") as string,
-      rating: Number(formData.get("rating")),
-      image: formData.get("image") as string,
-      scholarship: Number(formData.get("scholarship")),
-      nonScholarship: Number(formData.get("nonScholarship")),
-      //@ts-expect-error error
-      shifts: formData.get("shifts")?.toString().split(",") || [],
-      active: false
-    };
 
     try {
+      const newCourse: Course = {
+        title: formData.title,
+        rating: Number(formData.rating),
+        image: formData.image,
+        scholarship: Number(formData.scholarship),
+        nonScholarship: Number(formData.nonScholarship),
+        //@ts-expect-error error
+        shifts: formData.shifts,
+        active: false,
+      };
       const response = await addCourse(newCourse);
-      setCourses([...courses, response.data])
-      toast.success('courses added sucessfully')
+      setCourses([...courses, response.data]);
+      toast.success("Course added successfully!");
     } catch (error) {
+      toast.error("Failed to add course.");
       console.error("Error adding course", error);
-      toast.error("failed to add course");
-
     } finally {
       setIsAddModalOpen(false);
     }
@@ -93,29 +118,30 @@ const CoursesComponent: React.FC = () => {
 
   const handleUpdateSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const updatedCourse: Course = {
-      ...editingCourse,
-      title: formData.get("title") as string,
-      rating: Number(formData.get("rating")),
-      image: formData.get("image") as string,
-      scholarship: Number(formData.get("scholarship")),
-      active: formData.get("active"),
-      nonScholarship: Number(formData.get("nonScholarship")),
-      shifts: formData.get("shifts")?.toString().split(",") || [],
-    } as unknown as Course;
 
     try {
+      const updatedCourse: Course = {
+        ...editingCourse,
+        title: formData.title,
+        rating: Number(formData.rating),
+        image: formData.image,
+        scholarship: Number(formData.scholarship),
+        nonScholarship: Number(formData.nonScholarship),
+        //@ts-expect-error error
+        shifts: formData.shifts,
+        //@ts-expect-error error
+        active: formData.active === "true" ? true : false,
+      };
+
       if (editingCourse?._id) {
         await updateCourse(editingCourse._id, updatedCourse);
         setCourses(
           courses.map((c) => (c._id === editingCourse._id ? updatedCourse : c))
         );
-      toast.success("courses updated sucessfully");
-
+        toast.success("Course updated successfully!");
       }
     } catch (error) {
-      toast.error("failed to update course");
+      toast.error("Failed to update course.");
       console.error("Error updating course", error);
     } finally {
       setIsUpdateModalOpen(false);
@@ -128,21 +154,39 @@ const CoursesComponent: React.FC = () => {
       if (id) {
         await deleteCourse(id);
         setCourses(courses.filter((c) => c._id !== id));
-      toast.success("courses deleted sucessfully");
-
+        toast.success("Course deleted successfully!");
       } else {
         console.error("No id found for the course. Cannot delete.");
       }
     } catch (error) {
-      toast.error("failed to delete course");
+      toast.error("Failed to delete course.");
       console.error("Error deleting course", error);
     }
   };
 
   const handleEdit = (course: Course) => {
     setEditingCourse(course);
+    setFormData({
+      title: course.title,
+      rating: course.rating,
+      image: course.image,
+      scholarship: course.scholarship,
+      nonScholarship: course.nonScholarship,
+      //@ts-expect-error error
+      shifts: course.shifts || [],
+    });
     setIsUpdateModalOpen(true);
   };
+
+  const canCreate = userData
+    ? hasPermission(userData, "courses", "create")
+    : false;
+  const canUpdate = userData
+    ? hasPermission(userData, "courses", "update")
+    : false;
+  const canDelete = userData
+    ? hasPermission(userData, "courses", "delete")
+    : false;
 
   return (
     <Layout>
@@ -150,10 +194,10 @@ const CoursesComponent: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-semibold text-gray-900">Courses</h1>
           <button
-            disabled={!hasPermission(userData as IUser, "courses", "create")}
+            disabled={!canCreate}
             onClick={() => setIsAddModalOpen(true)}
             className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white ${
-              !hasPermission(userData as IUser, "courses", "create")
+              !canCreate
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-indigo-600 hover:bg-indigo-700"
             }`}
@@ -180,7 +224,7 @@ const CoursesComponent: React.FC = () => {
                   <h3 className="text-lg font-medium text-gray-900">
                     {course.title}
                   </h3>
-                  <div className="flex items-center mt-2  justify-between">
+                  <div className="flex items-center mt-2 justify-between">
                     <div className="">
                       <span className="text-yellow-400">
                         {"★".repeat(course.rating)}
@@ -194,33 +238,29 @@ const CoursesComponent: React.FC = () => {
                         course.active ? "text-green-500" : "text-red-600"
                       }`}
                     >
-                      {course.active ? "Active" : "Disactive"}
+                      {course.active ? "Active" : "Inactive"}
                     </span>
                   </div>
                   <div className="mt-4 flex justify-between">
                     <button
-                      disabled={
-                        !hasPermission(userData as IUser, "courses", "create")
-                      }
+                      disabled={!canUpdate}
                       onClick={() => handleEdit(course)}
                       className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
-                        !hasPermission(userData as IUser, "courses", "update")
+                        !canUpdate
                           ? "bg-gray-400 cursor-not-allowed text-white"
-                          : "bg-indigo-100  text-indigo-700 hover:bg-indigo-200"
-                      } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+                          : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                      }`}
                     >
                       Update
                     </button>
                     <button
-                      disabled={
-                        !hasPermission(userData as IUser, "courses", "delete")
-                      }
+                      disabled={!canDelete}
                       onClick={() => handleDelete(course._id)}
                       className={`inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md ${
-                        !hasPermission(userData as IUser, "courses", "delete")
+                        !canDelete
                           ? "bg-gray-400 text-white cursor-not-allowed"
                           : "text-red-700 bg-red-100 hover:bg-red-200"
-                      } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500`}
+                      }`}
                     >
                       Delete
                     </button>
@@ -233,169 +273,167 @@ const CoursesComponent: React.FC = () => {
           <p>No courses available.</p>
         )}
 
+        {/* Add Course Modal */}
         <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)}>
           <h2 className="text-xl font-bold mb-4">Add New Course</h2>
           <form onSubmit={handleAddSubmit}>
             <input
               type="text"
               name="title"
+              value={formData.title}
+              onChange={handleChange}
               placeholder="Course Title"
+              className="input mb-4 w-full"
               required
-              className="mb-2 w-full px-3 py-2 border rounded"
-            />
-            <input
-              type="text"
-              name="description"
-              placeholder="Course Description"
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
             />
             <input
               type="number"
               name="rating"
-              placeholder="Rating (1-5)"
+              value={formData.rating}
+              onChange={handleChange}
+              placeholder="Rating"
+              className="input mb-4 w-full"
               min="1"
               max="5"
               required
-              className="mb-2 w-full px-3 py-2 border rounded"
             />
             <input
               type="text"
               name="image"
+              value={formData.image}
+              onChange={handleChange}
               placeholder="Image URL"
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
+              className="input mb-4 w-full"
             />
             <input
               type="number"
               name="scholarship"
-              placeholder="Scholarship"
+              value={formData.scholarship}
+              onChange={handleChange}
+              placeholder="Scholarship Available"
+              className="input mb-4 w-full"
               required
-              className="mb-2 w-full px-3 py-2 border rounded"
             />
             <input
               type="number"
               name="nonScholarship"
-              placeholder="Non-Scholarship"
+              value={formData.nonScholarship}
+              onChange={handleChange}
+              placeholder="Non-Scholarship Available"
+              className="input mb-4 w-full"
               required
-              className="mb-2 w-full px-3 py-2 border rounded"
             />
-            <div className="mb-2 w-full px-3 py-2 border rounded">
+            <div className="mb-4">
+              <p className="font-medium">Shifts:</p>
               {shifts.map((shift) => (
-                <div key={shift._id} className="flex  gap-2">
-                  <input
-                    value={shift._id}
-                    name="shifts"
-                    type="checkbox"
-                  />
-                  <p>
+                <div key={shift._id}>
+                  <label className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={formData.shifts.includes(shift._id)}
+                      onChange={() => handleShiftChange(shift._id)}
+                      className="mr-2"
+                    />
                     {shift.start} - {shift.end}
-                  </p>
+                  </label>
                 </div>
               ))}
             </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Add Course
-            </button>
-          </form>
-        </Modal>
-
-        <Modal
-          isOpen={isUpdateModalOpen}
-          onClose={() => setIsUpdateModalOpen(false)}
-        >
-          <h2 className="text-xl font-bold mb-4">Update Course</h2>
-          <form onSubmit={handleUpdateSubmit}>
-            <label htmlFor="titel">Title</label>
-            <input
-              type="text"
-              name="title"
-              defaultValue={editingCourse?.title}
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-            />
-
-            <label htmlFor="title">Rating</label>
-
-            <input
-              type="number"
-              name="rating"
-              defaultValue={editingCourse?.rating}
-              min="1"
-              max="5"
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-              placeholder={editingCourse?.rating ? "rating" : ""}
-            />
-            <label htmlFor="titel">image</label>
-
-            <input
-              type="text"
-              name="image"
-              defaultValue={editingCourse?.image}
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-            />
-            <label htmlFor="titel">Price for scholarship</label>
-
-            <input
-              type="number"
-              name="scholarship"
-              defaultValue={editingCourse?.scholarship}
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-              placeholder={editingCourse?.image ? "scholarship price" : ""}
-            />
-            <label htmlFor="titel">Price for non Scholarship</label>
-
-            <input
-              type="number"
-              name="nonScholarship"
-              defaultValue={editingCourse?.nonScholarship}
-              required
-              className="mb-2 w-full px-3 py-2 border rounded"
-              placeholder={editingCourse?.rating ? "non scholarship price" : ""}
-            />
-            <label htmlFor="active">Enable / disable</label>
-
-            <select
-              name="active"
-              id=""
-              defaultValue={editingCourse?.active as any}
-              className="mb-2 w-full px-3 py-2 border rounded"
-            >
-              <option value="true">Enable</option>
-              <option value="false">Disable</option>
-            </select>
-            <label htmlFor="titel">Shift separated by comma</label>
-
-            <div className="mb-2 w-full px-3 py-2 border rounded">
-              {shifts.map((shift) => (
-                <div key={shift._id} className="flex  gap-2">
-                  <input
-                    value={shift._id}
-                    name="shifts"
-                    //@ts-expect-error
-                    checked={editingCourse?.shifts?.includes(shift._id)}
-                    type="checkbox"
-                  />
-                  <p>
-                    {shift.start} - {shift.end}
-                  </p>
-                </div>
-              ))}
+            <div className="mb-4">
+              <button
+                type="submit"
+                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+              >
+                Add Course
+              </button>
             </div>
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded"
-            >
-              Update Course
-            </button>
           </form>
         </Modal>
+
+        {/* Update Course Modal */}
+        {editingCourse && (
+          <Modal
+            isOpen={isUpdateModalOpen}
+            onClose={() => setIsUpdateModalOpen(false)}
+          >
+            <h2 className="text-xl font-bold mb-4">Update Course</h2>
+            <form onSubmit={handleUpdateSubmit}>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                placeholder="Course Title"
+                className="input mb-4 w-full border-2 rounded-md p-2 "
+                required
+              />
+              <input
+                type="number"
+                name="rating"
+                value={formData.rating}
+                onChange={handleChange}
+                placeholder="Rating"
+                className="input mb-4 w-full border-2 rounded-md p-2"
+                min="1"
+                max="5"
+                required
+              />
+              <input
+                type="text"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                placeholder="Image URL"
+                className="input mb-4 w-full border-2 rounded-md p-2"
+              />
+              <input
+                type="number"
+                name="scholarship"
+                value={formData.scholarship}
+                onChange={handleChange}
+                placeholder="Scholarship Available"
+                className="input mb-4 w-full border-2 rounded-md p-2"
+                required
+              />
+              <input
+                type="number"
+                name="nonScholarship"
+                value={formData.nonScholarship}
+                onChange={handleChange}
+                placeholder="Non-Scholarship Available"
+                className="input mb-4 w-full border-2 rounded-md p-2"
+                required
+              />
+              <div className="mb-4">
+                <p className="font-medium">Shifts:</p>
+                <div className="border-2 rounded-md p-2 ">
+                  {shifts.map((shift) => (
+                    <label key={shift._id} className="flex items-center ">
+                      <input
+                        type="checkbox"
+                        checked={formData.shifts.some(
+                          //@ts-expect-error error
+                          (item) => item._id === shift._id
+                        )}
+                        onChange={() => handleShiftChange(shift._id)}
+                        className="mr-2"
+                      />
+                      {shift.start} - {shift.end}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="mb-4">
+                <button
+                  type="submit"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+                >
+                  Update Course
+                </button>
+              </div>
+            </form>
+          </Modal>
+        )}
       </div>
     </Layout>
   );

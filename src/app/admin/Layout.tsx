@@ -50,6 +50,9 @@ useEffect(() => {
               <Link href="/admin/admins" className="nav-link">
                 Admins
               </Link>
+              <Link href="/admin/shift" className="nav-link">
+                Shift
+              </Link>
               <Link href="/admin/intakes" className="nav-link">
                 Intakes
               </Link>
