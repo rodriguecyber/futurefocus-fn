@@ -18,11 +18,10 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import API_BASE_URL from "@/config/baseURL";
 
-
 const CoursesComponent: React.FC = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [shifts, setShifts] = useState<
-    { _id: string; start: string; end: string }[]
+    { _id: string;name:string, start: string; end: string }[]
   >([]);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -30,14 +29,14 @@ const CoursesComponent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<IUser | null>(null);
 
-  // State for controlled form inputs
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Course>({
     title: "",
     rating: 1,
     image: "",
+    active: false,
     scholarship: 0,
     nonScholarship: 0,
-    shifts: [] as string[], // Store shift IDs
+    shifts: [],
   });
 
   useEffect(() => {
@@ -49,12 +48,12 @@ const CoursesComponent: React.FC = () => {
         } else {
           console.error("Unexpected data format:", response.data);
           setCourses([]);
-          
         }
         await fetchUser();
         setUserData(await getLoggedUserData());
       } catch (error) {
         console.error("Error fetching courses", error);
+        toast.error("Failed to load courses.");
         setCourses([]);
       } finally {
         setLoading(false);
@@ -67,6 +66,7 @@ const CoursesComponent: React.FC = () => {
         setShifts(response.data.shifts);
       } catch (error) {
         console.log(error);
+        toast.error("Failed to load shifts.");
       }
     };
 
@@ -82,18 +82,19 @@ const CoursesComponent: React.FC = () => {
     }));
   };
 
-  const handleShiftChange = (shiftId: string) => {
+  const handleShiftChange = (
+    shift: { _id: string; name: string; start: string; end: string }
+  ) => {
     setFormData((prevData) => {
-      const newShifts = prevData.shifts.includes(shiftId)
-        ? prevData.shifts.filter((id) => id !== shiftId)
-        : [...prevData.shifts, shiftId];
+      const newShifts = prevData.shifts.includes(shift)
+        ? prevData.shifts.filter((shift) => shift !== shift)
+        : [...prevData.shifts, shift];
       return { ...prevData, shifts: newShifts };
     });
   };
 
   const handleAddSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     try {
       const newCourse: Course = {
         title: formData.title,
@@ -101,9 +102,8 @@ const CoursesComponent: React.FC = () => {
         image: formData.image,
         scholarship: Number(formData.scholarship),
         nonScholarship: Number(formData.nonScholarship),
-        //@ts-expect-error error
         shifts: formData.shifts,
-        active: false,
+        active: formData.active,
       };
       const response = await addCourse(newCourse);
       setCourses([...courses, response.data]);
@@ -127,10 +127,8 @@ const CoursesComponent: React.FC = () => {
         image: formData.image,
         scholarship: Number(formData.scholarship),
         nonScholarship: Number(formData.nonScholarship),
-        //@ts-expect-error error
         shifts: formData.shifts,
-        //@ts-expect-error error
-        active: formData.active === "true" ? true : false,
+        active: formData.active  ? true : false,
       };
 
       if (editingCourse?._id) {
@@ -169,11 +167,11 @@ const CoursesComponent: React.FC = () => {
     setFormData({
       title: course.title,
       rating: course.rating,
+      active:course.active,
       image: course.image,
       scholarship: course.scholarship,
       nonScholarship: course.nonScholarship,
-      //@ts-expect-error error
-      shifts: course.shifts || [],
+      shifts: course.shifts|| [],
     });
     setIsUpdateModalOpen(true);
   };
@@ -330,8 +328,8 @@ const CoursesComponent: React.FC = () => {
                   <label className="flex items-center">
                     <input
                       type="checkbox"
-                      checked={formData.shifts.includes(shift._id)}
-                      onChange={() => handleShiftChange(shift._id)}
+                      checked={formData.shifts.includes(shift)}
+                      onChange={() => handleShiftChange(shift)}
                       className="mr-2"
                     />
                     {shift.start} - {shift.end}
@@ -412,10 +410,9 @@ const CoursesComponent: React.FC = () => {
                       <input
                         type="checkbox"
                         checked={formData.shifts.some(
-                          //@ts-expect-error error
                           (item) => item._id === shift._id
                         )}
-                        onChange={() => handleShiftChange(shift._id)}
+                        onChange={() => handleShiftChange(shift)}
                         className="mr-2"
                       />
                       {shift.start} - {shift.end}
