@@ -23,6 +23,9 @@ const CoursesComponent: React.FC = () => {
   const [shifts, setShifts] = useState<
     { _id: string;name:string, start: string; end: string }[]
   >([]);
+  const [togglesActive, setTogglesActive] = useState<{
+    [key: string]: boolean;
+  }>({});
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -82,6 +85,18 @@ const CoursesComponent: React.FC = () => {
     }));
   };
 
+  const handleToggleActive = async (id: string) => {
+    try {
+      await axios.put(`${API_BASE_URL}/course/activate/${id}`,);
+      setTogglesActive((prev) => ({
+        ...prev,
+        [id]: !prev[id],
+      }));
+      toast.success("switched succsfully");
+    } catch (error) {
+      toast.error("failed to switch");
+    }
+  };
   const handleShiftChange = (
     shift: { _id: string; name: string; start: string; end: string }
   ) => {
@@ -231,13 +246,31 @@ const CoursesComponent: React.FC = () => {
                         ({course.rating})
                       </span>
                     </div>
-                    <span
-                      className={`${
-                        course.active ? "text-green-500" : "text-red-600"
-                      }`}
-                    >
-                      {course.active ? "Active" : "Inactive"}
-                    </span>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        id={`course-${course._id}`}
+                        className="toggle-checkbox hidden"
+                        checked={togglesActive[course._id as string] || false}
+                        onChange={() => handleToggleActive(course._id as string)}
+                      />
+                      <div
+                        onClick={() => handleToggleActive(course._id as string)}
+                        className={`toggle-container w-12 md:w-16 h-6 md:h-8 rounded-full flex items-center p-1 cursor-pointer ${
+                          togglesActive[course._id as string]
+                            ? "bg-blue-500"
+                            : "bg-gray-300"
+                        }`}
+                      >
+                        <div
+                          className={`toggle-circle w-5 h-5 md:w-6 md:h-6 bg-white rounded-full shadow-md transform transition-transform duration-300 ${
+                            togglesActive[course._id as string]
+                              ? "translate-x-6 md:translate-x-8"
+                              : ""
+                          }`}
+                        />
+                      </div>
+                    </div>
                   </div>
                   <div className="mt-4 flex justify-between">
                     <button

@@ -1,4 +1,3 @@
-// services/CourseService.ts
 import API_BASE_URL from "@/config/baseURL";
 import axios from "axios";
 

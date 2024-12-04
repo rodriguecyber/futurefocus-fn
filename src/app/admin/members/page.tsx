@@ -33,7 +33,10 @@ const MembersPage: React.FC = () => {
     image: "",
     role: "",
     position: "",
+    entry:"",
+    exit:"",
     email: "",
+    days:"",
     phone:'',
     instagram: "",
     isAdmin:false
@@ -168,9 +171,12 @@ const MembersPage: React.FC = () => {
       role: "",
       phone:"",
       position: "",
+      entry:"",
       email: "",
       instagram: "",
-      isAdmin:false
+      isAdmin:false,
+      exit:"",
+      days:""
     });
   };
 
@@ -378,6 +384,33 @@ const MembersPage: React.FC = () => {
               value={formData.phone}
               onChange={handleChange}
               placeholder="Phone number"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
+              required
+            />
+            <input
+              type="time"
+              name="entry"
+              value={formData.entry}
+              onChange={handleChange}
+              placeholder="Entry time"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
+              required
+            />
+            <input
+              type="time"
+              name="exit"
+              value={formData.exit}
+              onChange={handleChange}
+              placeholder="Exit time"
+              className="w-full p-2 border rounded-md text-sm md:text-base"
+              required
+            />
+            <input
+              type="text"
+              name="days"
+              value={formData.days}
+              onChange={handleChange}
+              placeholder="working days"
               className="w-full p-2 border rounded-md text-sm md:text-base"
               required
             />
